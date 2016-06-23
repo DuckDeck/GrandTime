@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AE76EAA91D1BFA2900122CD1 /* TimeSpan.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE76EAA81D1BFA2900122CD1 /* TimeSpan.swift */; };
 		AEB45EFA1D1B685B00A763BE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEB45EF91D1B685B00A763BE /* AppDelegate.swift */; };
 		AEB45EFC1D1B685B00A763BE /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEB45EFB1D1B685B00A763BE /* ViewController.swift */; };
 		AEB45EFF1D1B685B00A763BE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AEB45EFD1D1B685B00A763BE /* Main.storyboard */; };
@@ -16,6 +17,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		AE76EAA81D1BFA2900122CD1 /* TimeSpan.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimeSpan.swift; sourceTree = "<group>"; };
 		AEB45EF61D1B685B00A763BE /* GrandTimeDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GrandTimeDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AEB45EF91D1B685B00A763BE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		AEB45EFB1D1B685B00A763BE /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -71,8 +73,10 @@
 			isa = PBXGroup;
 			children = (
 				AEB45F0C1D1B688500A763BE /* GrandTime.swift */,
+				AE76EAA81D1BFA2900122CD1 /* TimeSpan.swift */,
 			);
-			path = GrandTime;
+			name = GrandTime;
+			path = ../GrandTime;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -148,6 +152,7 @@
 			files = (
 				AEB45EFC1D1B685B00A763BE /* ViewController.swift in Sources */,
 				AEB45EFA1D1B685B00A763BE /* AppDelegate.swift in Sources */,
+				AE76EAA91D1BFA2900122CD1 /* TimeSpan.swift in Sources */,
 				AEB45F0D1D1B688500A763BE /* GrandTime.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -298,6 +303,7 @@
 				AEB45F0A1D1B685B00A763BE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
