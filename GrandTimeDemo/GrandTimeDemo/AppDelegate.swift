@@ -16,7 +16,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.
-        let ts = TimeSpan.fromSeconds(1.5)
+        let t1 = DateTime()
+        let t2 = DateTime(year: 2016, month: 6, day: 22)
+        let sp = t1 - t2
         return true
     }
 

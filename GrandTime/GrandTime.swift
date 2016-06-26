@@ -8,6 +8,7 @@
 
 import UIKit
 //这个类就完全参考C#的DateTime
+//基本功能先这样
 public enum  DateTimeKind:Int{
     case Unspecified=0,Utc,Local
 }
@@ -16,10 +17,53 @@ public enum DayOfWeek:Int{
     case Monday = 0,Tuesday,Wedensday,Thursday,Friday,Saturday,Sunday
 }
 
+
+
 let LeapYearMonth = [31,29,31,30,31,30,31,31,30,31,30,31]
 let NotLeapYearMonth  = [31,28,31,30,31,30,31,31,30,31,30,31]
 
-public class DateTime: NSObject {
+//这个会有点难，要算的东西有点多
+func -(left:DateTime,right:DateTime) -> TimeSpan {
+    let ms = left.dateTime.timeIntervalSinceDate(right.dateTime)
+    assert(ms > 0,"left time must > right time")
+    return TimeSpan(ticks: Int(ms) * 1000)
+}
+
+func +(left:DateTime,right:TimeSpan) -> DateTime {
+    let ms = Int(left.dateTime.timeIntervalSince1970 * 1000) + right.milliseconds
+    return DateTime(tick: ms)
+}
+
+func -(left:DateTime,right:TimeSpan) -> DateTime {
+    let ms = Int(left.dateTime.timeIntervalSince1970 * 1000) - right.milliseconds
+    assert(ms > 0, "the result date must > 0")
+    return DateTime(tick: ms)
+
+}
+
+public func >(lhs: DateTime, rhs: DateTime) -> Bool {
+    let ms = lhs.dateTime.timeIntervalSinceDate(lhs.dateTime)
+    return ms > 0
+}
+
+public func >=(lhs: DateTime, rhs: DateTime) -> Bool {
+    let ms = lhs.dateTime.timeIntervalSinceDate(lhs.dateTime)
+    return ms >= 0
+}
+
+public func <(lhs: DateTime, rhs: DateTime) -> Bool {
+    let ms = lhs.dateTime.timeIntervalSinceDate(lhs.dateTime)
+    return ms < 0
+}
+
+
+public func <=(lhs: DateTime, rhs: DateTime) -> Bool {
+    let ms = lhs.dateTime.timeIntervalSinceDate(lhs.dateTime)
+    return ms <= 0
+}
+
+
+public class DateTime: NSObject,Comparable {
     
     
     
@@ -53,11 +97,29 @@ public class DateTime: NSObject {
 //        dateTime = NSDate(timeIntervalSince1970: Double(tick) / 1000.0)
 //    }
     
+    public convenience init(date:NSDate) {
+        self.init()
+        dateTime = date
+    }
+    
+     public   convenience init(tickSinceNow:Int) {
+        self.init()
+        assert(tickSinceNow >= 0 && tickSinceNow <= Int.max / 100000, "wrong tick")
+        //这个是以秒为单体，DateTime都是100纳秒为单位
+        dateTime = NSDate(timeIntervalSinceNow: Double(tickSinceNow) / 1000.0)
+    }
+    
+    
+    public convenience init(timestamp:Int){
+        self.init()
+        assert(timestamp >= 0 && timestamp <= Int.max / 100000, "wrong timestamp")
+        dateTime = NSDate(timeIntervalSince1970: NSTimeInterval(timestamp))
+    }
     public convenience init(year:Int,month:Int,day:Int) {
         self.init()
         dateTime = NSDate(timeIntervalSince1970: 0)
         assert(year >= 1970 && year <= 1000000, "year must big than 1970 and must less than 1000000")
-        assert(month >= 1 && year <= 12, "month must big than 0 and less than 12")
+        assert(month >= 1 && month <= 12, "month must big than 0 and less than 12")
         assert(day >= 1 && day <= 31, "day must big than 0 and less than 31")
         //这里还要特别计算，稍后处理,后面已经处理了
         DateTime.dateComponent.year = year
@@ -235,21 +297,21 @@ public class DateTime: NSObject {
     public var weekOfYear:Int{
         return internalDateComponent.weekOfYear
     }
-
-    public var isLeapYear:Bool{
-        return self.year / 4 == 0 && self.year / 100 != 0
-    }
     
     public var ticks:Int{
          return Int(dateTime.timeIntervalSince1970 * Double(1000))
     }
-   
+   //以后再做
+//    public var utcDateTime:Date{
+//        return NSTimeZone
+//    }
+    
     public var dayOfYear:Int{
         get{
             let month = self.month
             let day = self.day
             var days = 0
-            if isLeapYear {
+            if DateTime.isLeapYeay(self.year) {
                 var i = 0
                 while i < month {
                     days += LeapYearMonth[i]
@@ -268,5 +330,108 @@ public class DateTime: NSObject {
         }
     }
     
+    public static func isLeapYeay(year:Int)->Bool{
+        return year / 4 == 0 && year / 100 != 0
+    }
     
+   public func addDays(days:Double) -> DateTime {
+        let millisecondsDay = days * Double(TickPerDay)
+        return DateTime(date: NSDate(timeInterval: millisecondsDay / 1000, sinceDate: self.dateTime))
+    }
+    
+   public func addHours(hours:Double) -> DateTime {
+        let millisecondsDay = hours * Double(TickPerHour)
+        return DateTime(date: NSDate(timeInterval: millisecondsDay / 1000, sinceDate: self.dateTime))
+    }
+    
+   public func addMinutes(minutes:Double) -> DateTime {
+        let millisecondsDay = minutes * Double(TickPerMinute)
+        return DateTime(date: NSDate(timeInterval: millisecondsDay / 1000, sinceDate: self.dateTime))
+    }
+   public func addSeconds(seconds:Double) -> DateTime {
+        let millisecondsDay = seconds * Double(TickPerSecond)
+        return DateTime(date: NSDate(timeInterval: millisecondsDay / 1000, sinceDate: self.dateTime))
+    }
+    // 这个逻辑有没有问题呢？好像没有，要测试
+   public func addMonth(months:Int) -> DateTime {
+        var i = self.month
+        var currentYear = self.year
+        //可以将month转化成day
+        var  days = 0
+        while i < months{
+            if DateTime.isLeapYeay(currentYear) {
+                days = days + LeapYearMonth[i / 12]
+            }
+            else{
+                days = days + NotLeapYearMonth[i / 12]
+            }
+            if i / 12 == 0 {
+                currentYear = currentYear + 1
+            }
+            i = i + 1
+        }
+        return addDays(Double(days))
+    }
+    public func addYears(years:Int)->DateTime{
+        return addMonth(years * 12) //这样应该要吧
+    }
+    
+    static func compare(left:DateTime,right:DateTime)->Int{
+        let result = left.dateTime.compare(right.dateTime)
+        if result == .OrderedAscending {
+            return -1
+        }
+        else if result == .OrderedDescending{
+            return 1
+        }
+        return 0
+    }
+    
+    func compareTo(time:DateTime) -> Int {
+        return DateTime.compare(self, right: time)
+    }
+    
+    func daysInMontu(year:Int,month:Int) -> Int {
+        assert(month > 0 && month < 13,"month must > 0 and less than 13")
+        if DateTime.isLeapYeay(year) {
+            return LeapYearMonth[month]
+        }
+        else{
+            return NotLeapYearMonth[month]
+        }
+    }
+    
+    static func equals(left:DateTime,right:DateTime)->Bool{
+        return DateTime.compare(left, right: right) == 0
+    }
+    func  equals(time:DateTime) -> Bool {
+        return DateTime.equals(self, right: time)
+    }
+    func format(format:String = "yyyy-MM-dd HH:mm:ss") -> String {
+        let dateFormatter = NSDateFormatter()
+        dateFormatter.dateFormat = format
+        return dateFormatter.stringFromDate(self.dateTime)
+    }
+    static func parse(time:String) -> DateTime? {
+        let dateFormatter = NSDateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        if let date = dateFormatter.dateFromString(time){
+            return DateTime(date: date)
+        }
+        else{
+            return nil
+        }
+    }
+    static func parse(time:String,format:String) -> DateTime? {
+        let dateFormatter = NSDateFormatter()
+        dateFormatter.dateFormat = format
+        if let date = dateFormatter.dateFromString(time){
+            return DateTime(date: date)
+        }
+        else{
+            return nil
+        }
+    }
+
+  
 }
