@@ -38,27 +38,27 @@ func -(left:DateTime,right:TimeSpan) -> DateTime {
     let ms = Int(left.dateTime.timeIntervalSince1970 * 1000) - right.milliseconds
     assert(ms > 0, "the result date must > 0")
     return DateTime(tick: ms)
-
+    
 }
 
 public func >(lhs: DateTime, rhs: DateTime) -> Bool {
-    let ms = lhs.dateTime.timeIntervalSinceDate(lhs.dateTime)
+    let ms = lhs.dateTime.timeIntervalSinceDate(rhs.dateTime)
     return ms > 0
 }
 
 public func >=(lhs: DateTime, rhs: DateTime) -> Bool {
-    let ms = lhs.dateTime.timeIntervalSinceDate(lhs.dateTime)
+    let ms = lhs.dateTime.timeIntervalSinceDate(rhs.dateTime)
     return ms >= 0
 }
 
 public func <(lhs: DateTime, rhs: DateTime) -> Bool {
-    let ms = lhs.dateTime.timeIntervalSinceDate(lhs.dateTime)
+    let ms = lhs.dateTime.timeIntervalSinceDate(rhs.dateTime)
     return ms < 0
 }
 
 
 public func <=(lhs: DateTime, rhs: DateTime) -> Bool {
-    let ms = lhs.dateTime.timeIntervalSinceDate(lhs.dateTime)
+    let ms = lhs.dateTime.timeIntervalSinceDate(rhs.dateTime)
     return ms <= 0
 }
 
@@ -70,43 +70,55 @@ public class DateTime: NSObject,Comparable {
     //最小是1970年1月1号上午8点整
     public static let minDateTime = NSDate(timeIntervalSince1970: 0)
     //直接使用Int.max是不行的，太大了，至少要除100000
-   public static let maxDateTime = NSDate(timeIntervalSince1970: NSTimeInterval(Int.max) / 100000)
-   private  static var  dateComponent = NSDateComponents()
+    public static let maxDateTime = NSDate(timeIntervalSince1970: NSTimeInterval(Int.max) / 100000)
+    private  static var  dateComponent = NSDateComponents()
     
-  var dateTime = NSDate()
-  public  var timeZone = NSTimeZone.systemTimeZone()  //这个要不要自己封装？ 先用系统的吧
-  public  var dateTImeKind = DateTimeKind.Unspecified
+    var dateTime:NSDate{
+        didSet{
+            internalDateComponent =  NSCalendar.currentCalendar().components([.Weekday,.WeekOfYear,.Year,.Month,.Day,.Hour,.Minute,.Second,.Nanosecond,.Quarter,.WeekOfMonth,.WeekOfYear], fromDate: dateTime)
+        }
+    }
+    public  var timeZone = NSTimeZone.systemTimeZone()  //这个要不要自己封装？ 先用系统的吧
+    public  var dateTImeKind = DateTimeKind.Unspecified
+    private var internalDateComponent:NSDateComponents
     override init() {
+        internalDateComponent = NSDateComponents()
+        dateTime = NSDate()
         super.init()
+          internalDateComponent =  NSCalendar.currentCalendar().components([.Weekday,.WeekOfYear,.Year,.Month,.Day,.Hour,.Minute,.Second,.Nanosecond,.Quarter,.WeekOfMonth,.WeekOfYear], fromDate: dateTime)
     }
     
- 
     
-   public convenience init(tick:Int) {
+    
+    public convenience init(tick:Int) {
         self.init()
         assert(tick >= 0 && tick <= Int.max / 100000, "wrong tick")
         //这个是以秒为单体，DateTime都是100纳秒为单位
         dateTime = NSDate(timeIntervalSince1970: Double(tick) / 1000.0)
+          internalDateComponent =  NSCalendar.currentCalendar().components([.Weekday,.WeekOfYear,.Year,.Month,.Day,.Hour,.Minute,.Second,.Nanosecond,.Quarter,.WeekOfMonth,.WeekOfYear], fromDate: dateTime)
+        
     }
     //暂时不要这个
-//  public  convenience init(tick:Int,kind:DateTimeKind) {
-//        self.init()
-//        assert(tick >= 0 && tick <= Int.max / 100000, "wrong tick")
-//        //这个是以秒为单体，DateTime都是100纳秒为单位
-//        dateTImeKind = kind
-//        dateTime = NSDate(timeIntervalSince1970: Double(tick) / 1000.0)
-//    }
+    //  public  convenience init(tick:Int,kind:DateTimeKind) {
+    //        self.init()
+    //        assert(tick >= 0 && tick <= Int.max / 100000, "wrong tick")
+    //        //这个是以秒为单体，DateTime都是100纳秒为单位
+    //        dateTImeKind = kind
+    //        dateTime = NSDate(timeIntervalSince1970: Double(tick) / 1000.0)
+    //    }
     
     public convenience init(date:NSDate) {
         self.init()
         dateTime = date
+          internalDateComponent =  NSCalendar.currentCalendar().components([.Weekday,.WeekOfYear,.Year,.Month,.Day,.Hour,.Minute,.Second,.Nanosecond,.Quarter,.WeekOfMonth,.WeekOfYear], fromDate: dateTime)
     }
     
-     public   convenience init(tickSinceNow:Int) {
+    public   convenience init(tickSinceNow:Int) {
         self.init()
         assert(tickSinceNow >= 0 && tickSinceNow <= Int.max / 100000, "wrong tick")
         //这个是以秒为单体，DateTime都是100纳秒为单位
         dateTime = NSDate(timeIntervalSinceNow: Double(tickSinceNow) / 1000.0)
+          internalDateComponent =  NSCalendar.currentCalendar().components([.Weekday,.WeekOfYear,.Year,.Month,.Day,.Hour,.Minute,.Second,.Nanosecond,.Quarter,.WeekOfMonth,.WeekOfYear], fromDate: dateTime)
     }
     
     
@@ -114,6 +126,7 @@ public class DateTime: NSObject,Comparable {
         self.init()
         assert(timestamp >= 0 && timestamp <= Int.max / 100000, "wrong timestamp")
         dateTime = NSDate(timeIntervalSince1970: NSTimeInterval(timestamp))
+          internalDateComponent =  NSCalendar.currentCalendar().components([.Weekday,.WeekOfYear,.Year,.Month,.Day,.Hour,.Minute,.Second,.Nanosecond,.Quarter,.WeekOfMonth,.WeekOfYear], fromDate: dateTime)
     }
     public convenience init(year:Int,month:Int,day:Int) {
         self.init()
@@ -127,6 +140,7 @@ public class DateTime: NSObject,Comparable {
         DateTime.dateComponent.day = day
         if let date = NSCalendar.currentCalendar().dateFromComponents(DateTime.dateComponent){
             dateTime = date
+              internalDateComponent =  NSCalendar.currentCalendar().components([.Weekday,.WeekOfYear,.Year,.Month,.Day,.Hour,.Minute,.Second,.Nanosecond,.Quarter,.WeekOfMonth,.WeekOfYear], fromDate: dateTime)
         }
         else{
             assert(true, "invalid day")
@@ -143,6 +157,7 @@ public class DateTime: NSObject,Comparable {
         DateTime.dateComponent.second = second
         if let date = NSCalendar.currentCalendar().dateFromComponents(DateTime.dateComponent){
             dateTime = date
+              internalDateComponent =  NSCalendar.currentCalendar().components([.Weekday,.WeekOfYear,.Year,.Month,.Day,.Hour,.Minute,.Second,.Nanosecond,.Quarter,.WeekOfMonth,.WeekOfYear], fromDate: dateTime)
         }
         else{
             assert(true, "wrong parameters")
@@ -155,28 +170,26 @@ public class DateTime: NSObject,Comparable {
         DateTime.dateComponent.nanosecond = millisecond
         if let date = NSCalendar.currentCalendar().dateFromComponents(DateTime.dateComponent){
             dateTime = date
+              internalDateComponent =  NSCalendar.currentCalendar().components([.Weekday,.WeekOfYear,.Year,.Month,.Day,.Hour,.Minute,.Second,.Nanosecond,.Quarter,.WeekOfMonth,.WeekOfYear], fromDate: dateTime)
         }
         else{
             assert(true, "wrong parameters")
         }
     }
     
-   public static var  now:DateTime{
+    public static var  now:DateTime{
         return DateTime()
     }
     
     public var dayOfWeek:DayOfWeek{
         get{
-           let cal = NSCalendar.currentCalendar()
+            let cal = NSCalendar.currentCalendar()
             let cmp = cal.component([.Weekday], fromDate: dateTime)
             return DayOfWeek(rawValue: cmp)!
         }
     }
     
     
-    private var internalDateComponent:NSDateComponents{
-        return NSCalendar.currentCalendar().components([.Weekday,.WeekOfYear,.Year,.Month,.Day,.Hour,.Minute,.Second,.Nanosecond,.Quarter,.WeekOfMonth,.WeekOfYear], fromDate: dateTime)
-    }
     
     public var year:Int{
         get{
@@ -287,7 +300,7 @@ public class DateTime: NSObject,Comparable {
     
     public var quarter:Int{
         return  internalDateComponent.quarter
-
+        
     }
     
     public var weekOfMonth:Int{
@@ -299,12 +312,21 @@ public class DateTime: NSObject,Comparable {
     }
     
     public var ticks:Int{
-         return Int(dateTime.timeIntervalSince1970 * Double(1000))
+        return Int(dateTime.timeIntervalSince1970 * Double(1000))
     }
-   //以后再做
-//    public var utcDateTime:Date{
-//        return NSTimeZone
-//    }
+    //以后再做
+    //    public var utcDateTime:Date{
+    //        return NSTimeZone
+    //    }
+    
+    
+    public override var description: String{
+        return self.format()
+    }
+    
+    public override var debugDescription: String{
+        return self.description
+    }
     
     public var dayOfYear:Int{
         get{
@@ -334,26 +356,26 @@ public class DateTime: NSObject,Comparable {
         return year / 4 == 0 && year / 100 != 0
     }
     
-   public func addDays(days:Double) -> DateTime {
+    public func addDays(days:Double) -> DateTime {
         let millisecondsDay = days * Double(TickPerDay)
         return DateTime(date: NSDate(timeInterval: millisecondsDay / 1000, sinceDate: self.dateTime))
     }
     
-   public func addHours(hours:Double) -> DateTime {
+    public func addHours(hours:Double) -> DateTime {
         let millisecondsDay = hours * Double(TickPerHour)
         return DateTime(date: NSDate(timeInterval: millisecondsDay / 1000, sinceDate: self.dateTime))
     }
     
-   public func addMinutes(minutes:Double) -> DateTime {
+    public func addMinutes(minutes:Double) -> DateTime {
         let millisecondsDay = minutes * Double(TickPerMinute)
         return DateTime(date: NSDate(timeInterval: millisecondsDay / 1000, sinceDate: self.dateTime))
     }
-   public func addSeconds(seconds:Double) -> DateTime {
+    public func addSeconds(seconds:Double) -> DateTime {
         let millisecondsDay = seconds * Double(TickPerSecond)
         return DateTime(date: NSDate(timeInterval: millisecondsDay / 1000, sinceDate: self.dateTime))
     }
     // 这个逻辑有没有问题呢？好像没有，要测试
-   public func addMonth(months:Int) -> DateTime {
+    public func addMonth(months:Int) -> DateTime {
         var i = self.month
         var currentYear = self.year
         //可以将month转化成day
@@ -432,6 +454,6 @@ public class DateTime: NSObject,Comparable {
             return nil
         }
     }
-
-  
+    
+    
 }
