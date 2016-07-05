@@ -85,7 +85,7 @@ public class DateTime: NSObject,Comparable {
         internalDateComponent = NSDateComponents()
         dateTime = NSDate()
         super.init()
-          internalDateComponent =  NSCalendar.currentCalendar().components([.Weekday,.WeekOfYear,.Year,.Month,.Day,.Hour,.Minute,.Second,.Nanosecond,.Quarter,.WeekOfMonth,.WeekOfYear], fromDate: dateTime)
+        internalDateComponent =  NSCalendar.currentCalendar().components([.Weekday,.WeekOfYear,.Year,.Month,.Day,.Hour,.Minute,.Second,.Nanosecond,.Quarter,.WeekOfMonth,.WeekOfYear], fromDate: dateTime)
     }
     
     
@@ -95,7 +95,7 @@ public class DateTime: NSObject,Comparable {
         assert(tick >= 0 && tick <= Int.max / 100000, "wrong tick")
         //这个是以秒为单体，DateTime都是100纳秒为单位
         dateTime = NSDate(timeIntervalSince1970: Double(tick) / 1000.0)
-          internalDateComponent =  NSCalendar.currentCalendar().components([.Weekday,.WeekOfYear,.Year,.Month,.Day,.Hour,.Minute,.Second,.Nanosecond,.Quarter,.WeekOfMonth,.WeekOfYear], fromDate: dateTime)
+        internalDateComponent =  NSCalendar.currentCalendar().components([.Weekday,.WeekOfYear,.Year,.Month,.Day,.Hour,.Minute,.Second,.Nanosecond,.Quarter,.WeekOfMonth,.WeekOfYear], fromDate: dateTime)
         
     }
     //暂时不要这个
@@ -110,7 +110,7 @@ public class DateTime: NSObject,Comparable {
     public convenience init(date:NSDate) {
         self.init()
         dateTime = date
-          internalDateComponent =  NSCalendar.currentCalendar().components([.Weekday,.WeekOfYear,.Year,.Month,.Day,.Hour,.Minute,.Second,.Nanosecond,.Quarter,.WeekOfMonth,.WeekOfYear], fromDate: dateTime)
+        internalDateComponent =  NSCalendar.currentCalendar().components([.Weekday,.WeekOfYear,.Year,.Month,.Day,.Hour,.Minute,.Second,.Nanosecond,.Quarter,.WeekOfMonth,.WeekOfYear], fromDate: dateTime)
     }
     
     public   convenience init(tickSinceNow:Int) {
@@ -118,7 +118,7 @@ public class DateTime: NSObject,Comparable {
         assert(tickSinceNow >= 0 && tickSinceNow <= Int.max / 100000, "wrong tick")
         //这个是以秒为单体，DateTime都是100纳秒为单位
         dateTime = NSDate(timeIntervalSinceNow: Double(tickSinceNow) / 1000.0)
-          internalDateComponent =  NSCalendar.currentCalendar().components([.Weekday,.WeekOfYear,.Year,.Month,.Day,.Hour,.Minute,.Second,.Nanosecond,.Quarter,.WeekOfMonth,.WeekOfYear], fromDate: dateTime)
+        internalDateComponent =  NSCalendar.currentCalendar().components([.Weekday,.WeekOfYear,.Year,.Month,.Day,.Hour,.Minute,.Second,.Nanosecond,.Quarter,.WeekOfMonth,.WeekOfYear], fromDate: dateTime)
     }
     
     
@@ -126,7 +126,7 @@ public class DateTime: NSObject,Comparable {
         self.init()
         assert(timestamp >= 0 && timestamp <= Int.max / 100000, "wrong timestamp")
         dateTime = NSDate(timeIntervalSince1970: NSTimeInterval(timestamp))
-          internalDateComponent =  NSCalendar.currentCalendar().components([.Weekday,.WeekOfYear,.Year,.Month,.Day,.Hour,.Minute,.Second,.Nanosecond,.Quarter,.WeekOfMonth,.WeekOfYear], fromDate: dateTime)
+        internalDateComponent =  NSCalendar.currentCalendar().components([.Weekday,.WeekOfYear,.Year,.Month,.Day,.Hour,.Minute,.Second,.Nanosecond,.Quarter,.WeekOfMonth,.WeekOfYear], fromDate: dateTime)
     }
     public convenience init(year:Int,month:Int,day:Int) {
         self.init()
@@ -140,7 +140,7 @@ public class DateTime: NSObject,Comparable {
         DateTime.dateComponent.day = day
         if let date = NSCalendar.currentCalendar().dateFromComponents(DateTime.dateComponent){
             dateTime = date
-              internalDateComponent =  NSCalendar.currentCalendar().components([.Weekday,.WeekOfYear,.Year,.Month,.Day,.Hour,.Minute,.Second,.Nanosecond,.Quarter,.WeekOfMonth,.WeekOfYear], fromDate: dateTime)
+            internalDateComponent =  NSCalendar.currentCalendar().components([.Weekday,.WeekOfYear,.Year,.Month,.Day,.Hour,.Minute,.Second,.Nanosecond,.Quarter,.WeekOfMonth,.WeekOfYear], fromDate: dateTime)
         }
         else{
             assert(true, "invalid day")
@@ -157,7 +157,7 @@ public class DateTime: NSObject,Comparable {
         DateTime.dateComponent.second = second
         if let date = NSCalendar.currentCalendar().dateFromComponents(DateTime.dateComponent){
             dateTime = date
-              internalDateComponent =  NSCalendar.currentCalendar().components([.Weekday,.WeekOfYear,.Year,.Month,.Day,.Hour,.Minute,.Second,.Nanosecond,.Quarter,.WeekOfMonth,.WeekOfYear], fromDate: dateTime)
+            internalDateComponent =  NSCalendar.currentCalendar().components([.Weekday,.WeekOfYear,.Year,.Month,.Day,.Hour,.Minute,.Second,.Nanosecond,.Quarter,.WeekOfMonth,.WeekOfYear], fromDate: dateTime)
         }
         else{
             assert(true, "wrong parameters")
@@ -170,7 +170,7 @@ public class DateTime: NSObject,Comparable {
         DateTime.dateComponent.nanosecond = millisecond
         if let date = NSCalendar.currentCalendar().dateFromComponents(DateTime.dateComponent){
             dateTime = date
-              internalDateComponent =  NSCalendar.currentCalendar().components([.Weekday,.WeekOfYear,.Year,.Month,.Day,.Hour,.Minute,.Second,.Nanosecond,.Quarter,.WeekOfMonth,.WeekOfYear], fromDate: dateTime)
+            internalDateComponent =  NSCalendar.currentCalendar().components([.Weekday,.WeekOfYear,.Year,.Month,.Day,.Hour,.Minute,.Second,.Nanosecond,.Quarter,.WeekOfMonth,.WeekOfYear], fromDate: dateTime)
         }
         else{
             assert(true, "wrong parameters")
@@ -218,7 +218,8 @@ public class DateTime: NSObject,Comparable {
             else{
                 assert(true, "wrong parameters")
             }
-        }    }
+        }
+    }
     
     
     public var day:Int{
@@ -356,26 +357,28 @@ public class DateTime: NSObject,Comparable {
         return year / 4 == 0 && year / 100 != 0
     }
     
-    public func addDays(days:Double) -> DateTime {
-        let millisecondsDay = days * Double(TickPerDay)
-        return DateTime(date: NSDate(timeInterval: millisecondsDay / 1000, sinceDate: self.dateTime))
+    public func addDays(days:Double)  {
+        addMilliSeconds(days * Double(TickPerDay))
     }
     
-    public func addHours(hours:Double) -> DateTime {
-        let millisecondsDay = hours * Double(TickPerHour)
-        return DateTime(date: NSDate(timeInterval: millisecondsDay / 1000, sinceDate: self.dateTime))
+    public func addHours(hours:Double)  {
+         addMilliSeconds(hours * Double(TickPerHour))
     }
     
-    public func addMinutes(minutes:Double) -> DateTime {
-        let millisecondsDay = minutes * Double(TickPerMinute)
-        return DateTime(date: NSDate(timeInterval: millisecondsDay / 1000, sinceDate: self.dateTime))
+    public func addMinutes(minutes:Double) {
+        addMilliSeconds(minutes * Double(TickPerMinute))
     }
-    public func addSeconds(seconds:Double) -> DateTime {
-        let millisecondsDay = seconds * Double(TickPerSecond)
-        return DateTime(date: NSDate(timeInterval: millisecondsDay / 1000, sinceDate: self.dateTime))
+    
+    public func addSeconds(seconds:Double)  {
+        addMilliSeconds(seconds * Double(TickPerSecond))
+    }
+    
+    public func addMilliSeconds(milliSeconds:Double){
+        assert(milliSeconds > 0,"the value must > 0")
+        self.dateTime = self.dateTime.dateByAddingTimeInterval(milliSeconds / 1000)
     }
     // 这个逻辑有没有问题呢？好像没有，要测试
-    public func addMonth(months:Int) -> DateTime {
+    public func addMonth(months:Int)  {
         var i = self.month
         var currentYear = self.year
         //可以将month转化成day
@@ -392,10 +395,11 @@ public class DateTime: NSObject,Comparable {
             }
             i = i + 1
         }
-        return addDays(Double(days))
+        addDays(Double(days))
     }
-    public func addYears(years:Int)->DateTime{
-        return addMonth(years * 12) //这样应该要吧
+    
+    public func addYears(years:Int){
+         addMonth(years * 12) //这样应该要吧
     }
     
     static func compare(left:DateTime,right:DateTime)->Int{
@@ -455,5 +459,7 @@ public class DateTime: NSObject,Comparable {
         }
     }
     
-    
+    public override func copy() -> AnyObject {
+        return DateTime(date: self.dateTime)
+    }
 }

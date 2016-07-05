@@ -17,9 +17,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.
         let d = DateTime.now
-        d.day = 12
-        d.hour = 22
         print(d)
+        let e = d.copy() as! DateTime
+        e.addSeconds(60)
+        print(e)
+        let c = e - d
+        print(c)
         return true
     }
 
