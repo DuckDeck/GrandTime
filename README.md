@@ -7,4 +7,7 @@ GrandTime is a simple ,user-friendly and powerful Datetime tool. as you know, th
 + Use TimeSpan to describe time interval【使用专门的类TimeSpan来表示时间间隔】
 + override operator, you can use operator manipulate DateTime very simple【重载了操作符，可以使用操作符来极为简单地操作DateTime】
 
+## Requirements 【系统要求】
+Xcode 7.3 and iOS 8.0 the last Swift grammer 【Xcode 7.3 and iOS 8.0 最新的Swift语法】
 
+##Installation【安装】
