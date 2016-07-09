@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		AE637EEE1D1FBD0600DE8015 /* GrandTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE637EED1D1FBD0600DE8015 /* GrandTimer.swift */; };
 		AE76EAA91D1BFA2900122CD1 /* TimeSpan.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE76EAA81D1BFA2900122CD1 /* TimeSpan.swift */; };
+		AE8DE1B51D2FA1F7002B9328 /* TimerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE8DE1B41D2FA1F7002B9328 /* TimerViewController.swift */; };
 		AEB45EFA1D1B685B00A763BE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEB45EF91D1B685B00A763BE /* AppDelegate.swift */; };
 		AEB45EFC1D1B685B00A763BE /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEB45EFB1D1B685B00A763BE /* ViewController.swift */; };
 		AEB45EFF1D1B685B00A763BE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AEB45EFD1D1B685B00A763BE /* Main.storyboard */; };
@@ -20,6 +21,7 @@
 /* Begin PBXFileReference section */
 		AE637EED1D1FBD0600DE8015 /* GrandTimer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GrandTimer.swift; sourceTree = "<group>"; };
 		AE76EAA81D1BFA2900122CD1 /* TimeSpan.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimeSpan.swift; sourceTree = "<group>"; };
+		AE8DE1B41D2FA1F7002B9328 /* TimerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimerViewController.swift; sourceTree = "<group>"; };
 		AEB45EF61D1B685B00A763BE /* GrandTimeDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GrandTimeDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AEB45EF91D1B685B00A763BE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		AEB45EFB1D1B685B00A763BE /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -67,6 +69,7 @@
 				AEB45F001D1B685B00A763BE /* Assets.xcassets */,
 				AEB45F021D1B685B00A763BE /* LaunchScreen.storyboard */,
 				AEB45F051D1B685B00A763BE /* Info.plist */,
+				AE8DE1B41D2FA1F7002B9328 /* TimerViewController.swift */,
 			);
 			path = GrandTimeDemo;
 			sourceTree = "<group>";
@@ -157,6 +160,7 @@
 				AEB45EFA1D1B685B00A763BE /* AppDelegate.swift in Sources */,
 				AE637EEE1D1FBD0600DE8015 /* GrandTimer.swift in Sources */,
 				AE76EAA91D1BFA2900122CD1 /* TimeSpan.swift in Sources */,
+				AE8DE1B51D2FA1F7002B9328 /* TimerViewController.swift in Sources */,
 				AEB45F0D1D1B688500A763BE /* GrandTime.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
