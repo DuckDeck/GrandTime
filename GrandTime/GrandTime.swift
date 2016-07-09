@@ -6,7 +6,7 @@
 //  Copyright © 2016 StanHu. All rights reserved.
 //
 
-import UIKit
+import Foundation
 //这个类就完全参考C#的DateTime
 //基本功能先这样
 public enum  DateTimeKind:Int{
@@ -74,6 +74,8 @@ public class DateTime: NSObject,Comparable {
     private  static var  dateComponent = NSDateComponents()
     
     var dateTime:NSDate{
+        // issue1 when in the init func .the disSet perocess do not work.
+        // need seek a way to fix it.
         didSet{
             internalDateComponent =  NSCalendar.currentCalendar().components([.Weekday,.WeekOfYear,.Year,.Month,.Day,.Hour,.Minute,.Second,.Nanosecond,.Quarter,.WeekOfMonth,.WeekOfYear], fromDate: dateTime)
         }

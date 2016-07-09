@@ -6,7 +6,7 @@
 //  Copyright © 2016 StanHu. All rights reserved.
 //
 
-import UIKit
+import Foundation
  let TickPerDay = 86400000
  let TickPerHour = 3600000
  let TickPerMinute = 60000
