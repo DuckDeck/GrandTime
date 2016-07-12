@@ -39,37 +39,57 @@ class GrandTimer: NSObject {
         self.timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, self.privateSerialQueue)
     }
     
+    internal convenience init(timespan:TimeSpan,block:()->Void, repeats:Bool,dispatchQueue:dispatch_queue_t) {
+         self.init()
+        self.timeSpan = timespan
+        self.block = block
+        self.repeats = repeats
+        let privateQueueName = "grandTime\(self)"
+        self.privateSerialQueue = dispatch_queue_create(privateQueueName.cStringUsingEncoding(NSUTF8StringEncoding)!, DISPATCH_QUEUE_SERIAL)
+        dispatch_set_target_queue(self.privateSerialQueue, dispatchQueue)
+        self.timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, self.privateSerialQueue)
+    }
+    
   internal  static func scheduleTimerWithTimeSpan(timespan:TimeSpan,target:AnyObject,sel:Selector,userInfo:AnyObject?,repeats:Bool,dispatchQueue:dispatch_queue_t)->GrandTimer{
         let timer = GrandTimer(timespan: timespan, target: target, sel: sel, userInfo: userInfo, repeats: repeats, dispatchQueue: dispatchQueue)
         timer.schedule()
         return timer
-    
     }
     
-    static func after(timeSpan:TimeSpan,_ block:()->Void)->GrandTimer{
-        let privateQueueName = "grandTimeAfter\(self)"
-        let dispatch = dispatch_queue_create(privateQueueName, DISPATCH_QUEUE_CONCURRENT)
-        let timer = GrandTimer.scheduleTimerWithTimeSpan(timeSpan, target: self, sel: #selector(GrandTimer.tick), userInfo: nil, repeats: false, dispatchQueue: dispatch)
-        timer.block = block
-        timer.fire()
+    internal  static func scheduleTimerWithTimeSpan(timespan:TimeSpan,block:()->Void,repeats:Bool,dispatchQueue:dispatch_queue_t)->GrandTimer{
+        let timer = GrandTimer(timespan: timespan, block: block, repeats: repeats, dispatchQueue: dispatchQueue)
+        timer.schedule()
         return timer
     }
     
-    static func every(timeSpan:TimeSpan,_ block:()->Void)->GrandTimer{
-        let privateQueueName = "grandTimeEvery\(self)"
+    static func after(timeSpan:TimeSpan,block:()->Void)->GrandTimer{
+        let privateQueueName = "grandTimeAfter\(arc4random())"
         let dispatch = dispatch_queue_create(privateQueueName, DISPATCH_QUEUE_CONCURRENT)
-        let timer = GrandTimer.scheduleTimerWithTimeSpan(timeSpan, target: self, sel: #selector(GrandTimer.tick), userInfo: nil, repeats: true, dispatchQueue: dispatch)
-        timer.block = block
-        timer.fire()
+        let timer = GrandTimer.scheduleTimerWithTimeSpan(timeSpan, block: block, repeats: false, dispatchQueue: dispatch)
+
+        
+        return timer
+    }
+    
+    static func every(timeSpan:TimeSpan,block:()->Void)->GrandTimer{
+        let privateQueueName = "grandTimeEvery\(arc4random())"
+        let dispatch = dispatch_queue_create(privateQueueName, DISPATCH_QUEUE_CONCURRENT)
+        let timer = GrandTimer.scheduleTimerWithTimeSpan(timeSpan, block: block, repeats: true, dispatchQueue: dispatch)
         return timer
     }
     
     // issue0 ,as for selector in a static func, the selector must be a static selector, so this is the problem, need to fix it
-    func tick()  {
-        if let bok = block{
-            bok()
-        }
-    }
+    // It looks like the anly way to fix it is to save the block in a dict..
+    // select a key to store is a big issue, I can not find a desend key for this ,because the static func can not
+    // bad this func can not call periodical. So think this is not gonna to work, I must find a another way to handle this.
+    // So I must add a original func to init the timer
+   // static func tick()  {
+//        if let bok = block{
+//            bok()
+//        }
+        
+     //   print("11")
+ //   }
     
   internal  func schedule() {
         resetTimerProperties()
@@ -101,6 +121,12 @@ class GrandTimer: NSObject {
     func timerFired() {
         if OSAtomicAnd32OrigBarrier(1, &timerFlags.timerIsInvalid) < 0{
             return
+        }
+        if let blk = block{
+            dispatch_async(dispatch_get_main_queue(), { 
+                  blk()
+            })
+          
         }
         self.target?.performSelector(self.selector!, withObject: self)
         if !self.repeats {

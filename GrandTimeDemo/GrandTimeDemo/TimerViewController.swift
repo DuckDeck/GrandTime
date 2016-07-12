@@ -18,12 +18,29 @@ class TimerViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         let dispatch = dispatch_queue_create("test", DISPATCH_QUEUE_CONCURRENT)
-        timer = GrandTimer.scheduleTimerWithTimeSpan(TimeSpan.fromSeconds(1), target: self, sel: #selector(TimerViewController.tick), userInfo: nil, repeats: true, dispatchQueue: dispatch)
-        timer?.fire()
-         GrandTimer.every(TimeSpan.fromSeconds(2)) { 
-            self.seco2 = self.seco2 + 1
-            self.lblTimer.text = "\(self.seco2)"
+     //   timer = GrandTimer.scheduleTimerWithTimeSpan(TimeSpan.fromSeconds(1), target: self, sel: #selector(TimerViewController.tick), userInfo: nil, repeats: true, dispatchQueue: dispatch)
+     //   timer?.fire()
+//         GrandTimer.every(TimeSpan.fromSeconds(5)) {
+//            self.seco2 = self.seco2 + 1
+//            self.lblTimer.text = "\(self.seco2)"
+//        }
+        
+//        timer = GrandTimer.scheduleTimerWithTimeSpan(TimeSpan.fromSeconds(1), block: { 
+//                        self.seco2 = self.seco2 + 1
+//                        self.lblTimer.text = "\(self.seco2)"
+//
+//            }, repeats: true, dispatchQueue: dispatch)
+
+        
+           //Issue2: I must use a var to receive the GrandTimer static func which is to return a GrandTimer instance. I don't know why
+        //IF this werid stuff can not fix . I will feel unhappy.
+        weak var weakSelf = self
+     GrandTimer.every(TimeSpan.fromSeconds(1)) {
+            weakSelf!.seco2 = weakSelf!.seco2 + 1
+            weakSelf!.lblTimer.text = "\(weakSelf!.seco2)"
         }
+        
+
         // Do any additional setup after loading the view.
     }
     

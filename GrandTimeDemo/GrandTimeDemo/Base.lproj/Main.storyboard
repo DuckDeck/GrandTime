@@ -19,11 +19,14 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="RzE-gL-Sat">
-                                <rect key="frame" x="277" y="285" width="46" height="30"/>
+                                <rect key="frame" x="210" y="291" width="179" height="30"/>
+                                <color key="backgroundColor" red="1" green="0.13417768338891545" blue="0.9325110106996537" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="46" id="zLX-A0-Q8K"/>
+                                    <constraint firstAttribute="width" constant="179" id="Ryz-vb-l1b"/>
                                 </constraints>
-                                <state key="normal" title="Next"/>
+                                <state key="normal" title="Next">
+                                    <color key="titleShadowColor" red="1" green="0.96589105239999995" blue="0.12538443769999999" alpha="1" colorSpace="calibratedRGB"/>
+                                </state>
                                 <connections>
                                     <segue destination="ZhL-8i-0mj" kind="show" id="eo2-3r-ivM"/>
                                 </connections>
@@ -31,8 +34,8 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="RzE-gL-Sat" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="eGf-u7-2ec"/>
-                            <constraint firstItem="RzE-gL-Sat" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="qHi-lw-wfg"/>
+                            <constraint firstItem="RzE-gL-Sat" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="227" id="1MX-cj-w6f"/>
+                            <constraint firstItem="RzE-gL-Sat" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="NXd-Ky-eZd"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="chk-Bb-ieN"/>
