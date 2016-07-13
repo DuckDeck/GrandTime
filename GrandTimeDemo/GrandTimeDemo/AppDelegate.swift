@@ -48,7 +48,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         print(f)
         let g = DateTime(timestamp: 100000)
         print(g)
-        let h = DateTime(year: 2010, month: 2, day: 29)
+        let h = DateTime(year: 2008, month: 2, day: 29)
         print(h)
         let i = DateTime(year: 2016, month: 12, day: 12, hour: 11, minute: 44, second: 12, millisecond: 111)!
         print(i)
@@ -59,7 +59,31 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         //还可以直接设置各部分
         i.year = 2015
+        i.month = 1
+        i.day = 12
+        i.hour = 12
+        i.minute = 23
+        i.second = 12
+        i.millisecond = 555
+        print(i)
+        print(i.weekDay)
+        print(i.quarter)
+        print(i.weekOfYear)
+        print(i.weekOfMonth)
+        print(i.ticks)
+        print(i.dayOfYear)
         
+        
+        //下面是timespan
+        print("----------------------------------下面是TimeSpan----------------------------------")
+         let o = TimeSpan()
+        print(o)
+        let p = TimeSpan(days: 1, hours: 0, minutes: 11, seconds: 31)
+        print(p)
+        let q = TimeSpan(days: 20, hours: 11, minutes: 39, seconds: 21, milliseconds: 111)
+        print(q)
+        let r = TimeSpan(ticks: 9826127)
+        print(r)
         return true
     }
 

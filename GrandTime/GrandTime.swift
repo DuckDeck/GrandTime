@@ -14,7 +14,7 @@ public enum  DateTimeKind:Int{
 }
 
 public enum DayOfWeek:Int{
-    case Monday = 0,Tuesday,Wedensday,Thursday,Friday,Saturday,Sunday
+    case Monday = 0,Tuesday,Wendesday,Thursday,Friday,Saturday,Sunday
 }
 
 
@@ -209,7 +209,7 @@ public class DateTime: NSObject,Comparable {
             return nil
         }
         else if hour > 23 {
-            print("DateTime warning: hour can not bigger than 24")
+            print("DateTime warning: hour can not bigger than 23")
             return nil
         }
         else if minute < 0 {
@@ -372,7 +372,7 @@ public class DateTime: NSObject,Comparable {
             return internalDateComponent.nanosecond
         }
         set{
-            internalDateComponent.nanosecond = newValue
+            internalDateComponent.nanosecond = newValue * 1000000
             if let date = NSCalendar.currentCalendar().dateFromComponents(internalDateComponent){
                 dateTime = date
             }
@@ -388,7 +388,6 @@ public class DateTime: NSObject,Comparable {
     
     public var quarter:Int{
         return  internalDateComponent.quarter
-        
     }
     
     public var weekOfMonth:Int{
@@ -442,7 +441,7 @@ public class DateTime: NSObject,Comparable {
     }
     
     public static func isLeapYeay(year:Int)->Bool{
-        return year / 4 == 0 && year / 100 != 0
+        return year % 4 == 0 && year % 100 != 0
     }
     
     // 这个逻辑有没有问题呢？好像没有，要测试 事实是有问题的
@@ -534,7 +533,7 @@ public class DateTime: NSObject,Comparable {
         return DateTime.equals(self, right: time)
     }
     
-    func format(format:String = "yyyy-MM-dd HH:mm:ss") -> String {
+    func format(format:String = "yyyy-MM-dd HH:mm:ss:SSS") -> String {
         let dateFormatter = NSDateFormatter()
         dateFormatter.dateFormat = format
         return dateFormatter.stringFromDate(self.dateTime)

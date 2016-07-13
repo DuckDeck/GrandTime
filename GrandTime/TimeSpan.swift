@@ -7,13 +7,14 @@
 //
 
 import Foundation
- let TickPerDay = 86400000
- let TickPerHour = 3600000
- let TickPerMinute = 60000
- let TickPerSecond = 1000
+let TickPerDay = 86400000
+let TickPerHour = 3600000
+let TickPerMinute = 60000
+let TickPerSecond = 1000
+
 func +(left:TimeSpan,right:TimeSpan) -> TimeSpan {
     let tick = left.ticks + right.ticks
-    assert(tick < TimeSpan.Max.ticks,"two timespan add can not big than max time span")
+    assert(tick < TimeSpan.Max!.ticks,"two timespan add can not big than max time span")
     return TimeSpan(ticks: tick)
 }
 
@@ -63,31 +64,62 @@ public class TimeSpan: NSObject,Comparable {
     
     convenience init(ticks:Int) {
         self.init()
+        assert(ticks > 0, "ticks must > 0")
         _ticks = ticks
         setTimes()
     }
     
-    convenience init(hours:Int,minutes:Int,seconds:Int) {
+    convenience init?(hours:Int,minutes:Int,seconds:Int) {
         self.init()
-        assert(hours > 0, "hours must > 0")
-        assert(minutes > 0 && minutes < 60, "minus must > 0 and < 60")
-        assert(seconds > 0 && seconds < 60, "seconds must > 0 and < 60")
+        if hours < 0 {
+            print("DateTime warning: hours can not less than 0")
+            return nil
+        }
+        else if hours > 23 {
+            print("DateTime warning: hours can not bigger than 23")
+            return nil
+        }
+        else if minutes < 0 {
+            print("DateTime warning: minutes can not less than 0")
+            return nil
+        }
+        else if minutes > 59 {
+            print("DateTime warning: minutes can not bigger than 59")
+            return nil
+        }
+        else if seconds < 0 {
+            print("DateTime warning: seconds can not  less than 0")
+            return nil
+        }
+        else if seconds > 59{
+            print("DateTime warning: seconds can not  bigger than 59")
+            return nil
+        }
         _hour = hours
         _minute = minutes
         _second = seconds
         _ticks = hours * TickPerHour + _minute * TickPerMinute + _second * TickPerSecond
     }
     
-    convenience init(days:Int,hours:Int,minutes:Int,seconds:Int) {
-        assert(hours > 0 && hours < 24, "hours must > 0 and < 24")
+    convenience init?(days:Int,hours:Int,minutes:Int,seconds:Int) {
+        if days < 0 {
+            print("DateTime warning: days can not  less than 0")
+            return nil
+        }
         self.init(hours:hours,minutes: minutes,seconds: seconds)
         _day = days
         _ticks = _ticks + _day * TickPerDay
-
     }
     
-    convenience init(days:Int,hours:Int,minutes:Int,seconds:Int,milliseconds:Int) {
-        assert(milliseconds > 0 && milliseconds < 999, "milliseconds must > 0 and < 999")
+    convenience init?(days:Int,hours:Int,minutes:Int,seconds:Int,milliseconds:Int) {
+        if milliseconds < 0 {
+            print("DateTime warning: milliseconds can not  less than 0")
+            return nil
+        }
+        else if milliseconds > 999{
+            print("DateTime warning: milliseconds can not  bigger than 999")
+            return nil
+        }
         self.init(days:days,hours:hours,minutes: minutes,seconds: seconds)
         _millisecond = milliseconds
         _ticks = _ticks + milliseconds
@@ -233,7 +265,7 @@ public class TimeSpan: NSObject,Comparable {
     
     public func add(time:TimeSpan)->TimeSpan{
         let tick = time.ticks + self.ticks
-        assert(ticks > TimeSpan.Max.ticks,"the added value must < max")
+        assert(ticks > TimeSpan.Max!.ticks,"the added value must < max")
         return TimeSpan(ticks: tick)
     }
     
@@ -264,10 +296,9 @@ public class TimeSpan: NSObject,Comparable {
     public  override var description: String{
         get{
             let hour = String(format: "%02x", hours)
-            let minute = String(format: "%02x", minutes)
-            let second = String(format: "%02x", seconds)
-            let millisecond = String(format: "%02x", milliseconds)
-            
+            let minute = String(format: "%02", minutes)
+            let second = String(format: "%02", seconds)
+            let millisecond = String(format: "%02", milliseconds)
             if days > 0{
                 return "\(days) \(hour):\(minute):\(second):\(millisecond)"
             }
