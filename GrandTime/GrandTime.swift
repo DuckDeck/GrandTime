@@ -30,12 +30,12 @@ func -(left:DateTime,right:DateTime) -> TimeSpan {
 }
 
 func +(left:DateTime,right:TimeSpan) -> DateTime {
-    let ms = Int(left.dateTime.timeIntervalSince1970 * 1000) + right.milliseconds
+    let ms = Int(left.dateTime.timeIntervalSince1970 * 1000) + right.ticks
     return DateTime(tick: ms)
 }
 
 func -(left:DateTime,right:TimeSpan) -> DateTime {
-    let ms = Int(left.dateTime.timeIntervalSince1970 * 1000) - right.milliseconds
+    let ms = Int(left.dateTime.timeIntervalSince1970 * 1000) - right.ticks
     assert(ms > 0, "the result date must > 0")
     return DateTime(tick: ms)
     
@@ -150,7 +150,7 @@ public class DateTime: NSObject,Comparable {
     }
     
     public convenience init(year:Int,month:Int,day:Int,hour:Int,minute:Int,second:Int) {
-        self.init(year:year,month:minute,day:day)
+        self.init(year:year,month:month,day:day)
         assert(hour >= 0 && hour <= 23, "year must big than 1970 and must less than 1000000")
         assert(minute >= 0 && minute <= 59, "month must big than 0 and less than 12")
         assert(second >= 0 && second <= 59, "day must big than 0 and less than 31")
@@ -167,7 +167,7 @@ public class DateTime: NSObject,Comparable {
     }
     
     public convenience init(year:Int,month:Int,day:Int,hour:Int,minute:Int,second:Int,millisecond:Int) {
-        self.init(year:year,month:minute,day:day,hour: hour,minute: minute,second: second)
+        self.init(year:year,month:month,day:day,hour: hour,minute: minute,second: second)
         assert(millisecond >= 0 && millisecond <= 999, "millisecond must big than 0 and must less than 999")
         DateTime.dateComponent.nanosecond = millisecond
         if let date = NSCalendar.currentCalendar().dateFromComponents(DateTime.dateComponent){
@@ -251,7 +251,8 @@ public class DateTime: NSObject,Comparable {
             else{
                 assert(true, "wrong parameters")
             }
-        }    }
+        }
+    }
     
     public var minute:Int{
         get{
@@ -265,7 +266,8 @@ public class DateTime: NSObject,Comparable {
             else{
                 assert(true, "wrong parameters")
             }
-        }    }
+        }
+    }
     
     public var second:Int{
         get{
@@ -317,6 +319,7 @@ public class DateTime: NSObject,Comparable {
     public var ticks:Int{
         return Int(dateTime.timeIntervalSince1970 * Double(1000))
     }
+    
     //以后再做
     //    public var utcDateTime:Date{
     //        return NSTimeZone
@@ -379,20 +382,21 @@ public class DateTime: NSObject,Comparable {
         assert(milliSeconds > 0,"the value must > 0")
         self.dateTime = self.dateTime.dateByAddingTimeInterval(milliSeconds / 1000)
     }
-    // 这个逻辑有没有问题呢？好像没有，要测试
+    
+    // 这个逻辑有没有问题呢？好像没有，要测试 事实是有问题的
     public func addMonth(months:Int)  {
         var i = self.month
         var currentYear = self.year
         //可以将month转化成day
         var  days = 0
-        while i < months{
+        while i < months + self.month{
             if DateTime.isLeapYeay(currentYear) {
-                days = days + LeapYearMonth[i / 12]
+                days = days + LeapYearMonth[i % 12]
             }
             else{
-                days = days + NotLeapYearMonth[i / 12]
+                days = days + NotLeapYearMonth[i % 12]
             }
-            if i / 12 == 0 {
+            if i % 12 == 0 {
                 currentYear = currentYear + 1
             }
             i = i + 1
@@ -432,14 +436,17 @@ public class DateTime: NSObject,Comparable {
     static func equals(left:DateTime,right:DateTime)->Bool{
         return DateTime.compare(left, right: right) == 0
     }
+    
     func  equals(time:DateTime) -> Bool {
         return DateTime.equals(self, right: time)
     }
+    
     func format(format:String = "yyyy-MM-dd HH:mm:ss") -> String {
         let dateFormatter = NSDateFormatter()
         dateFormatter.dateFormat = format
         return dateFormatter.stringFromDate(self.dateTime)
     }
+    
     static func parse(time:String) -> DateTime? {
         let dateFormatter = NSDateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
@@ -450,6 +457,7 @@ public class DateTime: NSObject,Comparable {
             return nil
         }
     }
+    
     static func parse(time:String,format:String) -> DateTime? {
         let dateFormatter = NSDateFormatter()
         dateFormatter.dateFormat = format

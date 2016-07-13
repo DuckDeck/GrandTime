@@ -16,13 +16,50 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.
+        
+        
         let d = DateTime.now
         print(d)
-        let e = d.copy() as! DateTime
-        e.addSeconds(60)
-        print(e)
-        let c = e - d
+       let timeSpanOneMinute = TimeSpan.fromMinuts(1)
+        let dToOneMinuteBefore = d - timeSpanOneMinute
+        print(dToOneMinuteBefore)
+        let dToOneMinuteAfter = d + timeSpanOneMinute
+        print(dToOneMinuteAfter)
+        d.addYears(1)
+        print("add Years:\(d)")
+        d.addMonth(1)
+        print("add addMonth:\(d)")
+        d.addDays(1)
+        print("add addDays:\(d)")
+        d.addHours(1)
+        print("add addHours:\(d)")
+        d.addMinutes(1)
+        print("add addMinutes:\(d)")
+        d.addSeconds(1)
+        print("add addSeconds:\(d)")
+        //正面看看构造函数
+        let a = DateTime()
+        print(a)
+        let c = DateTime(date: NSDate(timeInterval: 3600, sinceDate: NSDate()))
         print(c)
+         let e = DateTime(tick: 1000000)
+        print(e)
+        let f = DateTime(tickSinceNow: 60000)
+        print(f)
+        let g = DateTime(timestamp: 100000)
+        print(g)
+        let h = DateTime(year: 2016, month: 12, day: 12)
+        print(h)
+        let i = DateTime(year: 2016, month: 12, day: 12, hour: 11, minute: 44, second: 12, millisecond: 111)
+        print(i)
+        
+        
+        //下面获取部分
+        print("获取i的各部分：year:\(i.year),   month:\(i.month),   day:\(i.day),   hour:\(i.hour),   minute:\(i.minute),   second:\(i.second),   minute:\(i.minute),   ticks:\(i.ticks),   ")
+        
+        //还可以直接设置各部分
+        i.year = 2015
+        
         return true
     }
 
