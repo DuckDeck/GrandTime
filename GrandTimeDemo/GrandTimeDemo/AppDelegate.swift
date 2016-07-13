@@ -48,9 +48,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         print(f)
         let g = DateTime(timestamp: 100000)
         print(g)
-        let h = DateTime(year: 2016, month: 12, day: 12)
+        let h = DateTime(year: 2010, month: 2, day: 29)
         print(h)
-        let i = DateTime(year: 2016, month: 12, day: 12, hour: 11, minute: 44, second: 12, millisecond: 111)
+        let i = DateTime(year: 2016, month: 12, day: 12, hour: 11, minute: 44, second: 12, millisecond: 111)!
         print(i)
         
         

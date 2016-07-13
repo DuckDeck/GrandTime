@@ -23,21 +23,26 @@ let LeapYearMonth = [31,29,31,30,31,30,31,31,30,31,30,31]
 let NotLeapYearMonth  = [31,28,31,30,31,30,31,31,30,31,30,31]
 
 //这个会有点难，要算的东西有点多
-func -(left:DateTime,right:DateTime) -> TimeSpan {
+func -(left:DateTime,right:DateTime) -> TimeSpan? {
     let ms = left.dateTime.timeIntervalSinceDate(right.dateTime)
-    assert(ms > 0,"left time must > right time")
+    if ms < 0 {
+        print("DateTime warning: left time must bigger then right time")
+        return nil
+    }
     return TimeSpan(ticks: Int(ms) * 1000)
 }
 
 func +(left:DateTime,right:TimeSpan) -> DateTime {
     let ms = Int(left.dateTime.timeIntervalSince1970 * 1000) + right.ticks
-    return DateTime(tick: ms)
+    return DateTime(tick: ms)!
 }
 
 func -(left:DateTime,right:TimeSpan) -> DateTime {
-    let ms = Int(left.dateTime.timeIntervalSince1970 * 1000) - right.ticks
-    assert(ms > 0, "the result date must > 0")
-    return DateTime(tick: ms)
+    var ms = Int(left.dateTime.timeIntervalSince1970 * 1000) - right.ticks
+    if ms < 0 {
+        ms = 0
+    }
+    return DateTime(tick: ms)!
     
 }
 
@@ -65,8 +70,6 @@ public func <=(lhs: DateTime, rhs: DateTime) -> Bool {
 
 public class DateTime: NSObject,Comparable {
     
-    
-    
     //最小是1970年1月1号上午8点整
     public static let minDateTime = NSDate(timeIntervalSince1970: 0)
     //直接使用Int.max是不行的，太大了，至少要除100000
@@ -92,10 +95,16 @@ public class DateTime: NSObject,Comparable {
     
     
     
-    public convenience init(tick:Int) {
+    public convenience init?(tick:Int) {
         self.init()
-        assert(tick >= 0 && tick <= Int.max / 100000, "wrong tick")
-        //这个是以秒为单体，DateTime都是100纳秒为单位
+        if ticks < 0 {
+            print("DateTime warning: tick can not less than 0")
+            return nil
+        }
+        else if ticks >= Int.max / 100000{
+            print("DateTime warning: tick can not bigger than Int.max / 100000")
+            return nil
+        }
         dateTime = NSDate(timeIntervalSince1970: Double(tick) / 1000.0)
         internalDateComponent =  NSCalendar.currentCalendar().components([.Weekday,.WeekOfYear,.Year,.Month,.Day,.Hour,.Minute,.Second,.Nanosecond,.Quarter,.WeekOfMonth,.WeekOfYear], fromDate: dateTime)
         
@@ -115,28 +124,71 @@ public class DateTime: NSObject,Comparable {
         internalDateComponent =  NSCalendar.currentCalendar().components([.Weekday,.WeekOfYear,.Year,.Month,.Day,.Hour,.Minute,.Second,.Nanosecond,.Quarter,.WeekOfMonth,.WeekOfYear], fromDate: dateTime)
     }
     
-    public   convenience init(tickSinceNow:Int) {
+    public   convenience init?(tickSinceNow:Int) {
         self.init()
-        assert(tickSinceNow >= 0 && tickSinceNow <= Int.max / 100000, "wrong tick")
         //这个是以秒为单体，DateTime都是100纳秒为单位
+        if ticks >= Int.max / 100000{
+            print("DateTime warning: tickSinceNow can not bigger than Int.max / 100000")
+            return nil
+        }
+        let interval = Int(NSDate().timeIntervalSince1970)
+        if tickSinceNow < -(interval * 1000) {
+            print("DateTime warning: tickSinceNow can not less than now to 1970 ticks")
+            return nil
+        }
         dateTime = NSDate(timeIntervalSinceNow: Double(tickSinceNow) / 1000.0)
         internalDateComponent =  NSCalendar.currentCalendar().components([.Weekday,.WeekOfYear,.Year,.Month,.Day,.Hour,.Minute,.Second,.Nanosecond,.Quarter,.WeekOfMonth,.WeekOfYear], fromDate: dateTime)
     }
     
     
-    public convenience init(timestamp:Int){
+    public convenience init?(timestamp:Int){
         self.init()
-        assert(timestamp >= 0 && timestamp <= Int.max / 100000, "wrong timestamp")
+        if timestamp < 0 {
+            print("DateTime warning: timestamp can not less than 0")
+            return nil
+        }
+        else if timestamp > Int.max / 100000{
+            print("DateTime warning: timestamp can not bigger than Int.max / 100000")
+            return nil
+        }
         dateTime = NSDate(timeIntervalSince1970: NSTimeInterval(timestamp))
         internalDateComponent =  NSCalendar.currentCalendar().components([.Weekday,.WeekOfYear,.Year,.Month,.Day,.Hour,.Minute,.Second,.Nanosecond,.Quarter,.WeekOfMonth,.WeekOfYear], fromDate: dateTime)
     }
-    public convenience init(year:Int,month:Int,day:Int) {
+    public convenience init?(year:Int,month:Int,day:Int) {
         self.init()
-        dateTime = NSDate(timeIntervalSince1970: 0)
-        assert(year >= 1970 && year <= 1000000, "year must big than 1970 and must less than 1000000")
-        assert(month >= 1 && month <= 12, "month must big than 0 and less than 12")
-        assert(day >= 1 && day <= 31, "day must big than 0 and less than 31")
-        //这里还要特别计算，稍后处理,后面已经处理了
+        if year < 1970 {
+            print("DateTime warning: year can not less than 1970")
+            return nil
+        }
+        else if year > 1000000 {
+            print("DateTime warning: year can not bigger than 1000000")
+            return nil
+        }
+        else if month < 1 {
+            print("DateTime warning: month can not less than 1")
+            return nil
+        }
+        else if month > 12 {
+            print("DateTime warning: month can not bigger than 12")
+            return nil
+        }
+        else if day < 1 {
+            print("DateTime warning: day can not less than 0")
+            return nil
+        }
+        else{
+            var maxDays = 30
+            if DateTime.isLeapYeay(year){
+                maxDays = LeapYearMonth[month-1]
+            }
+            else{
+                maxDays = NotLeapYearMonth[month-1]
+            }
+            if day > maxDays {
+                print("DateTime warning: day can not  bigger than \(maxDays)")
+                return nil
+            }
+        }
         DateTime.dateComponent.year = year
         DateTime.dateComponent.month = month
         DateTime.dateComponent.day = day
@@ -145,15 +197,37 @@ public class DateTime: NSObject,Comparable {
             internalDateComponent =  NSCalendar.currentCalendar().components([.Weekday,.WeekOfYear,.Year,.Month,.Day,.Hour,.Minute,.Second,.Nanosecond,.Quarter,.WeekOfMonth,.WeekOfYear], fromDate: dateTime)
         }
         else{
-            assert(true, "invalid day")
+            print("DateTime warning: time Component data have issue")
+            return nil
         }
     }
     
-    public convenience init(year:Int,month:Int,day:Int,hour:Int,minute:Int,second:Int) {
+    public convenience init?(year:Int,month:Int,day:Int,hour:Int,minute:Int,second:Int) {
         self.init(year:year,month:month,day:day)
-        assert(hour >= 0 && hour <= 23, "year must big than 1970 and must less than 1000000")
-        assert(minute >= 0 && minute <= 59, "month must big than 0 and less than 12")
-        assert(second >= 0 && second <= 59, "day must big than 0 and less than 31")
+        if hour < 0 {
+            print("DateTime warning: hour can not less than 0")
+            return nil
+        }
+        else if hour > 23 {
+            print("DateTime warning: hour can not bigger than 24")
+            return nil
+        }
+        else if minute < 0 {
+            print("DateTime warning: minute can not less than 0")
+            return nil
+        }
+        else if minute > 59 {
+            print("DateTime warning: minute can not bigger than 59")
+            return nil
+        }
+        else if second < 0 {
+            print("DateTime warning: second can not  less than 0")
+            return nil
+        }
+        else if second > 59{
+            print("DateTime warning: second can not  bigger than 59")
+            return nil
+        }
         DateTime.dateComponent.hour = hour
         DateTime.dateComponent.minute = minute
         DateTime.dateComponent.second = second
@@ -162,20 +236,29 @@ public class DateTime: NSObject,Comparable {
             internalDateComponent =  NSCalendar.currentCalendar().components([.Weekday,.WeekOfYear,.Year,.Month,.Day,.Hour,.Minute,.Second,.Nanosecond,.Quarter,.WeekOfMonth,.WeekOfYear], fromDate: dateTime)
         }
         else{
-            assert(true, "wrong parameters")
+            print("DateTime warning: time Component data have issue")
+            return nil
         }
     }
     
-    public convenience init(year:Int,month:Int,day:Int,hour:Int,minute:Int,second:Int,millisecond:Int) {
+    public convenience init?(year:Int,month:Int,day:Int,hour:Int,minute:Int,second:Int,millisecond:Int) {
         self.init(year:year,month:month,day:day,hour: hour,minute: minute,second: second)
-        assert(millisecond >= 0 && millisecond <= 999, "millisecond must big than 0 and must less than 999")
+        if millisecond < 0 {
+            print("DateTime warning: millisecond can not less than 0")
+            return nil
+        }
+        else if millisecond > 999{
+            print("DateTime warning: millisecond can not bigger than 999")
+            return nil
+        }
         DateTime.dateComponent.nanosecond = millisecond
         if let date = NSCalendar.currentCalendar().dateFromComponents(DateTime.dateComponent){
             dateTime = date
             internalDateComponent =  NSCalendar.currentCalendar().components([.Weekday,.WeekOfYear,.Year,.Month,.Day,.Hour,.Minute,.Second,.Nanosecond,.Quarter,.WeekOfMonth,.WeekOfYear], fromDate: dateTime)
         }
         else{
-            assert(true, "wrong parameters")
+            print("DateTime warning: time Component data have issue")
+            return nil
         }
     }
     
@@ -203,7 +286,7 @@ public class DateTime: NSObject,Comparable {
                 dateTime = date
             }
             else{
-                assert(true, "wrong parameters")
+                print("DateTime warning: year have issue")
             }
         }
     }
@@ -218,7 +301,7 @@ public class DateTime: NSObject,Comparable {
                 dateTime = date
             }
             else{
-                assert(true, "wrong parameters")
+                print("DateTime warning: month have issue")
             }
         }
     }
@@ -234,7 +317,7 @@ public class DateTime: NSObject,Comparable {
                 dateTime = date
             }
             else{
-                assert(true, "wrong parameters")
+                print("DateTime warning: day have issue")
             }
         }
     }
@@ -249,7 +332,7 @@ public class DateTime: NSObject,Comparable {
                 dateTime = date
             }
             else{
-                assert(true, "wrong parameters")
+                print("DateTime warning: hore have issue")
             }
         }
     }
@@ -264,7 +347,7 @@ public class DateTime: NSObject,Comparable {
                 dateTime = date
             }
             else{
-                assert(true, "wrong parameters")
+                print("DateTime warning: minute have issue")
             }
         }
     }
@@ -279,7 +362,7 @@ public class DateTime: NSObject,Comparable {
                 dateTime = date
             }
             else{
-                assert(true, "wrong parameters")
+                print("DateTime warning: second have issue")
             }
         }
     }
@@ -294,7 +377,7 @@ public class DateTime: NSObject,Comparable {
                 dateTime = date
             }
             else{
-                assert(true, "wrong parameters")
+                print("DateTime warning: millisecond have issue")
             }
         }
     }
@@ -362,27 +445,6 @@ public class DateTime: NSObject,Comparable {
         return year / 4 == 0 && year / 100 != 0
     }
     
-    public func addDays(days:Double)  {
-        addMilliSeconds(days * Double(TickPerDay))
-    }
-    
-    public func addHours(hours:Double)  {
-         addMilliSeconds(hours * Double(TickPerHour))
-    }
-    
-    public func addMinutes(minutes:Double) {
-        addMilliSeconds(minutes * Double(TickPerMinute))
-    }
-    
-    public func addSeconds(seconds:Double)  {
-        addMilliSeconds(seconds * Double(TickPerSecond))
-    }
-    
-    public func addMilliSeconds(milliSeconds:Double){
-        assert(milliSeconds > 0,"the value must > 0")
-        self.dateTime = self.dateTime.dateByAddingTimeInterval(milliSeconds / 1000)
-    }
-    
     // 这个逻辑有没有问题呢？好像没有，要测试 事实是有问题的
     public func addMonth(months:Int)  {
         var i = self.month
@@ -405,7 +467,31 @@ public class DateTime: NSObject,Comparable {
     }
     
     public func addYears(years:Int){
-         addMonth(years * 12) //这样应该要吧
+        if year + years > 1000000 {
+            print("DateTime warning: years is too big")
+            return
+        }
+        addMonth(years * 12) //这样应该要吧
+    }
+    
+    public func addDays(days:Double)  {
+        addMilliSeconds(days * Double(TickPerDay))
+    }
+    
+    public func addHours(hours:Double)  {
+         addMilliSeconds(hours * Double(TickPerHour))
+    }
+    
+    public func addMinutes(minutes:Double) {
+        addMilliSeconds(minutes * Double(TickPerMinute))
+    }
+    
+    public func addSeconds(seconds:Double)  {
+        addMilliSeconds(seconds * Double(TickPerSecond))
+    }
+    
+    public func addMilliSeconds(milliSeconds:Double){
+        self.dateTime = self.dateTime.dateByAddingTimeInterval(milliSeconds / 1000)
     }
     
     static func compare(left:DateTime,right:DateTime)->Int{
@@ -423,8 +509,15 @@ public class DateTime: NSObject,Comparable {
         return DateTime.compare(self, right: time)
     }
     
-    func daysInMontu(year:Int,month:Int) -> Int {
-        assert(month > 0 && month < 13,"month must > 0 and less than 13")
+    func daysInMonth(year:Int,month:Int) -> Int? {
+         if month < 1 {
+            print("DateTime warning: month can not less than 1")
+            return nil
+        }
+        else if month > 12 {
+            print("DateTime warning: month can not bigger than 12")
+            return nil
+        }
         if DateTime.isLeapYeay(year) {
             return LeapYearMonth[month]
         }
