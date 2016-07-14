@@ -17,7 +17,7 @@ class TimerViewController: UIViewController {
     var seco2 = 0
     override func viewDidLoad() {
         super.viewDidLoad()
-        let dispatch = dispatch_queue_create("test", DISPATCH_QUEUE_CONCURRENT)
+     //   let dispatch = dispatch_queue_create("test", DISPATCH_QUEUE_CONCURRENT)
      //   timer = GrandTimer.scheduleTimerWithTimeSpan(TimeSpan.fromSeconds(1), target: self, sel: #selector(TimerViewController.tick), userInfo: nil, repeats: true, dispatchQueue: dispatch)
      //   timer?.fire()
 //         GrandTimer.every(TimeSpan.fromSeconds(5)) {

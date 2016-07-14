@@ -17,7 +17,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.
         
-        
+        print("----------------------------------下面是DateTime----------------------------------")
         let d = DateTime.now
         print(d)
        let timeSpanOneMinute = TimeSpan.fromMinuts(1)

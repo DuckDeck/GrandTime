@@ -72,27 +72,27 @@ public class TimeSpan: NSObject,Comparable {
     convenience init?(hours:Int,minutes:Int,seconds:Int) {
         self.init()
         if hours < 0 {
-            print("DateTime warning: hours can not less than 0")
+            print("TimeSpan warning: hours can not less than 0")
             return nil
         }
         else if hours > 23 {
-            print("DateTime warning: hours can not bigger than 23")
+            print("TimeSpan warning: hours can not bigger than 23")
             return nil
         }
         else if minutes < 0 {
-            print("DateTime warning: minutes can not less than 0")
+            print("TimeSpan warning: minutes can not less than 0")
             return nil
         }
         else if minutes > 59 {
-            print("DateTime warning: minutes can not bigger than 59")
+            print("TimeSpan warning: minutes can not bigger than 59")
             return nil
         }
         else if seconds < 0 {
-            print("DateTime warning: seconds can not  less than 0")
+            print("TimeSpan warning: seconds can not  less than 0")
             return nil
         }
         else if seconds > 59{
-            print("DateTime warning: seconds can not  bigger than 59")
+            print("TimeSpan warning: seconds can not  bigger than 59")
             return nil
         }
         _hour = hours
@@ -103,7 +103,7 @@ public class TimeSpan: NSObject,Comparable {
     
     convenience init?(days:Int,hours:Int,minutes:Int,seconds:Int) {
         if days < 0 {
-            print("DateTime warning: days can not  less than 0")
+            print("TimeSpan warning: days can not  less than 0")
             return nil
         }
         self.init(hours:hours,minutes: minutes,seconds: seconds)
@@ -113,11 +113,11 @@ public class TimeSpan: NSObject,Comparable {
     
     convenience init?(days:Int,hours:Int,minutes:Int,seconds:Int,milliseconds:Int) {
         if milliseconds < 0 {
-            print("DateTime warning: milliseconds can not  less than 0")
+            print("TimeSpan warning: milliseconds can not  less than 0")
             return nil
         }
         else if milliseconds > 999{
-            print("DateTime warning: milliseconds can not  bigger than 999")
+            print("TimeSpan warning: milliseconds can not  bigger than 999")
             return nil
         }
         self.init(days:days,hours:hours,minutes: minutes,seconds: seconds)
@@ -255,6 +255,7 @@ public class TimeSpan: NSObject,Comparable {
     //这里可能要用正则，字符單解析一直是个大难题，这就是为什么编译器这么难写
     //C#里面有-的TimeSpan 我觉得没有必要
     public static func parse(time:String)->TimeSpan?{
+        
         return nil //时间不够，暂时不做
     }
     
@@ -295,15 +296,15 @@ public class TimeSpan: NSObject,Comparable {
 
     public  override var description: String{
         get{
-            let hour = String(format: "%02x", hours)
-            let minute = String(format: "%02", minutes)
-            let second = String(format: "%02", seconds)
-            let millisecond = String(format: "%02", milliseconds)
+            //let hour = String(format: "%02d", hours)
+            let minute = String(format: "%02d", minutes)
+            let second = String(format: "%02d", seconds)
+            let millisecond = String(format: "%03d", milliseconds)
             if days > 0{
-                return "\(days) \(hour):\(minute):\(second):\(millisecond)"
+                return "\(days) \(hours):\(minute):\(second):\(millisecond)"
             }
             else {
-                return "\(hour):\(minute):\(second):\(millisecond)"
+                return "\(hours):\(minute):\(second):\(millisecond)"
             }
         }
     }
