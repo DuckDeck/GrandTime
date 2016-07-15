@@ -1,5 +1,6 @@
 # GrandTime
 A Powerful NSDate replacement【一个强力的NSDate代替者】
+
 GrandTime is a simple ,user-friendly and powerful Datetime tool. as you know, the original iOS date API is awful,very difficult to use. So a develop this DateTime to replace the NSDate API. trust me. it worth you try it
 
 ## Key Features
@@ -12,3 +13,5 @@ GrandTime is a simple ,user-friendly and powerful Datetime tool. as you know, th
 Xcode 7.3 and iOS 8.0 the last Swift version 【Xcode 7.3 and iOS 8.0 最新的Swift法版本】
 
 ##Installation【安装】
++ Installation with CocoaPods：pod 'GrandTime'
++ Manual import, just need darg all the file to your project
