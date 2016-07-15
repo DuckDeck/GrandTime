@@ -58,7 +58,7 @@ class TimerViewController: UIViewController {
     }
 
     deinit{
-        print("\(self.dynamicType)) the view deinit which means the timer release the viewcontrollre")
+        print("\(self.dynamicType)) the view deinit which means the timer release in the viewcontrollre")
     }
     
     override func didReceiveMemoryWarning() {
@@ -67,14 +67,6 @@ class TimerViewController: UIViewController {
     }
     
 
-    /*
-    // MARK: - Navigation
 
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
 
 }

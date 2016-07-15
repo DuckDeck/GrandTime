@@ -539,6 +539,16 @@ public class DateTime: NSObject,Comparable {
         return dateFormatter.stringFromDate(self.dateTime)
     }
     
+    var dateString:String{
+        return self.format("yyyy-MM-dd")
+    }
+    
+    var timeString:String{
+        return self.format("HH:mm:ss")
+    }
+    
+    
+    
     static func parse(time:String) -> DateTime? {
         let dateFormatter = NSDateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"

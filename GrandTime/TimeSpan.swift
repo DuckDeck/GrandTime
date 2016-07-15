@@ -266,7 +266,7 @@ public class TimeSpan: NSObject,Comparable {
     
     public func add(time:TimeSpan)->TimeSpan{
         let tick = time.ticks + self.ticks
-        assert(ticks > TimeSpan.Max!.ticks,"the added value must < max")
+        assert(ticks < TimeSpan.Max!.ticks,"the added value must < max")
         return TimeSpan(ticks: tick)
     }
     
