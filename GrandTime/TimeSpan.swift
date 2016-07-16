@@ -12,13 +12,13 @@ let TickPerHour = 3600000
 let TickPerMinute = 60000
 let TickPerSecond = 1000
 
-func +(left:TimeSpan,right:TimeSpan) -> TimeSpan {
+public func +(left:TimeSpan,right:TimeSpan) -> TimeSpan {
     let tick = left.ticks + right.ticks
     assert(tick < TimeSpan.Max!.ticks,"two timespan add can not big than max time span")
     return TimeSpan(ticks: tick)
 }
 
-func -(left:TimeSpan,right:TimeSpan) -> TimeSpan {
+public func -(left:TimeSpan,right:TimeSpan) -> TimeSpan {
     let tick = left.ticks - right.ticks
     assert(tick > 0,"two timespan subtruct can not less than 0")
     return TimeSpan(ticks: tick)
@@ -50,26 +50,26 @@ public func == (lhs: TimeSpan, rhs: TimeSpan) -> Bool
 public class TimeSpan: NSObject,Comparable {
     
     
-    static let Max = TimeSpan(days: 100000, hours: 23, minutes: 59, seconds: 59, milliseconds: 999)
-    static let Zero = TimeSpan(days: 0, hours: 0, minutes: 0, seconds: 0, milliseconds: 0)
-    var _day = 0
-    var _hour = 0
-    var _minute = 0
-    var _second = 0
-    var _millisecond = 0
-    var _ticks = 0
-    override init() {
+  public  static let Max = TimeSpan(days: 100000, hours: 23, minutes: 59, seconds: 59, milliseconds: 999)
+  public  static let Zero = TimeSpan(days: 0, hours: 0, minutes: 0, seconds: 0, milliseconds: 0)
+  private  var _day = 0
+  private  var _hour = 0
+  private  var _minute = 0
+   private var _second = 0
+  private  var _millisecond = 0
+  private  var _ticks = 0
+  public  override init() {
         super.init()
     }
     
-    convenience init(ticks:Int) {
+  public  convenience init(ticks:Int) {
         self.init()
         assert(ticks > 0, "ticks must > 0")
         _ticks = ticks
         setTimes()
     }
     
-    convenience init?(hours:Int,minutes:Int,seconds:Int) {
+  public  convenience init?(hours:Int,minutes:Int,seconds:Int) {
         self.init()
         if hours < 0 {
             print("TimeSpan warning: hours can not less than 0")
@@ -101,7 +101,7 @@ public class TimeSpan: NSObject,Comparable {
         _ticks = hours * TickPerHour + _minute * TickPerMinute + _second * TickPerSecond
     }
     
-    convenience init?(days:Int,hours:Int,minutes:Int,seconds:Int) {
+   public convenience init?(days:Int,hours:Int,minutes:Int,seconds:Int) {
         if days < 0 {
             print("TimeSpan warning: days can not  less than 0")
             return nil
@@ -111,7 +111,7 @@ public class TimeSpan: NSObject,Comparable {
         _ticks = _ticks + _day * TickPerDay
     }
     
-    convenience init?(days:Int,hours:Int,minutes:Int,seconds:Int,milliseconds:Int) {
+   public convenience init?(days:Int,hours:Int,minutes:Int,seconds:Int,milliseconds:Int) {
         if milliseconds < 0 {
             print("TimeSpan warning: milliseconds can not  less than 0")
             return nil
@@ -271,7 +271,7 @@ public class TimeSpan: NSObject,Comparable {
     }
     
     
-    func compareTo(time:TimeSpan) -> Int {
+  public  func compareTo(time:TimeSpan) -> Int {
         return TimeSpan.compare(self, t2: time)
     }
     
@@ -287,7 +287,7 @@ public class TimeSpan: NSObject,Comparable {
 //    }
     
 
-    func subtract(time:TimeSpan) -> TimeSpan {
+  public  func subtract(time:TimeSpan) -> TimeSpan {
         let tick = self.ticks - time.ticks
         assert(ticks > 0,"tick must > 0")
         return TimeSpan(ticks: tick)

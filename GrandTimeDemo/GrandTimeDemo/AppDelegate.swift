@@ -117,6 +117,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         print(s)
         
         return true
+        
+        
     }
 
     func applicationWillResignActive(application: UIApplication) {

@@ -19,11 +19,11 @@ public enum DayOfWeek:Int{
 
 
 
-let LeapYearMonth = [31,29,31,30,31,30,31,31,30,31,30,31]
-let NotLeapYearMonth  = [31,28,31,30,31,30,31,31,30,31,30,31]
+public let LeapYearMonth = [31,29,31,30,31,30,31,31,30,31,30,31]
+public let NotLeapYearMonth  = [31,28,31,30,31,30,31,31,30,31,30,31]
 
 //这个会有点难，要算的东西有点多
-func -(left:DateTime,right:DateTime) -> TimeSpan? {
+public func -(left:DateTime,right:DateTime) -> TimeSpan? {
     let ms = left.dateTime.timeIntervalSinceDate(right.dateTime)
     if ms < 0 {
         print("DateTime warning: left time must bigger then right time")
@@ -32,12 +32,12 @@ func -(left:DateTime,right:DateTime) -> TimeSpan? {
     return TimeSpan(ticks: Int(ms) * 1000)
 }
 
-func +(left:DateTime,right:TimeSpan) -> DateTime {
+public func +(left:DateTime,right:TimeSpan) -> DateTime {
     let ms = Int(left.dateTime.timeIntervalSince1970 * 1000) + right.ticks
     return DateTime(tick: ms)!
 }
 
-func -(left:DateTime,right:TimeSpan) -> DateTime {
+public func -(left:DateTime,right:TimeSpan) -> DateTime {
     var ms = Int(left.dateTime.timeIntervalSince1970 * 1000) - right.ticks
     if ms < 0 {
         ms = 0
@@ -76,7 +76,7 @@ public class DateTime: NSObject,Comparable {
     public static let maxDateTime = NSDate(timeIntervalSince1970: NSTimeInterval(Int.max) / 100000)
     private  static var  dateComponent = NSDateComponents()
     
-    var dateTime:NSDate{
+   private var dateTime:NSDate{
         // issue1 when in the init func .the disSet perocess do not work.
         // need seek a way to fix it.
         didSet{
@@ -86,7 +86,7 @@ public class DateTime: NSObject,Comparable {
     public  var timeZone = NSTimeZone.systemTimeZone()  //这个要不要自己封装？ 先用系统的吧
     public  var dateTImeKind = DateTimeKind.Unspecified
     private var internalDateComponent:NSDateComponents
-    override init() {
+    public  override init() {
         internalDateComponent = NSDateComponents()
         dateTime = NSDate()
         super.init()
@@ -493,7 +493,7 @@ public class DateTime: NSObject,Comparable {
         self.dateTime = self.dateTime.dateByAddingTimeInterval(milliSeconds / 1000)
     }
     
-    static func compare(left:DateTime,right:DateTime)->Int{
+   public static func compare(left:DateTime,right:DateTime)->Int{
         let result = left.dateTime.compare(right.dateTime)
         if result == .OrderedAscending {
             return -1
@@ -504,11 +504,11 @@ public class DateTime: NSObject,Comparable {
         return 0
     }
     
-    func compareTo(time:DateTime) -> Int {
+  public  func compareTo(time:DateTime) -> Int {
         return DateTime.compare(self, right: time)
     }
     
-    func daysInMonth(year:Int,month:Int) -> Int? {
+ public   func daysInMonth(year:Int,month:Int) -> Int? {
          if month < 1 {
             print("DateTime warning: month can not less than 1")
             return nil
@@ -525,31 +525,31 @@ public class DateTime: NSObject,Comparable {
         }
     }
     
-    static func equals(left:DateTime,right:DateTime)->Bool{
+   public static func equals(left:DateTime,right:DateTime)->Bool{
         return DateTime.compare(left, right: right) == 0
     }
     
-    func  equals(time:DateTime) -> Bool {
+  public  func  equals(time:DateTime) -> Bool {
         return DateTime.equals(self, right: time)
     }
     
-    func format(format:String = "yyyy-MM-dd HH:mm:ss:SSS") -> String {
+  public  func format(format:String = "yyyy-MM-dd HH:mm:ss:SSS") -> String {
         let dateFormatter = NSDateFormatter()
         dateFormatter.dateFormat = format
         return dateFormatter.stringFromDate(self.dateTime)
     }
     
-    var dateString:String{
+  public  var dateString:String{
         return self.format("yyyy-MM-dd")
     }
     
-    var timeString:String{
+ public   var timeString:String{
         return self.format("HH:mm:ss")
     }
     
     
     
-    static func parse(time:String) -> DateTime? {
+   public static func parse(time:String) -> DateTime? {
         let dateFormatter = NSDateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
         if let date = dateFormatter.dateFromString(time){
@@ -560,7 +560,7 @@ public class DateTime: NSObject,Comparable {
         }
     }
     
-    static func parse(time:String,format:String) -> DateTime? {
+  public  static func parse(time:String,format:String) -> DateTime? {
         let dateFormatter = NSDateFormatter()
         dateFormatter.dateFormat = format
         if let date = dateFormatter.dateFromString(time){
