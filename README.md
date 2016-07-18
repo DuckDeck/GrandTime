@@ -14,7 +14,7 @@ GrandTime is a simple ,user-friendly and powerful Datetime tool. as you know, th
 + GramdTimer is a weak timer when the VIewController pop to the navigationController, it can deinit correctly【GrandTimer是一个weak 计时器。当ViewController被弹出时，他会自动停止调用并销毁】
 
 ## Requirements 【系统要求】
-Xcode 7.3 and iOS 8.0 the last Swift version 【Xcode 7.3 and iOS 8.0 最新的Swift法版本】
+Xcode 7.3 and iOS 8.0 the last Swift version 【Xcode 7.3 and iOS 8.0 最新的Swift版本】
 
 ##Installation【安装】
 + Installation with CocoaPods：pod 'GrandTime' 【使用Cocoapods安装， pod 'GrandTime'】
@@ -123,8 +123,10 @@ Please see these code below【请参考以下代码】
         print(s)
 
 ```
+
 DateTime和TimeSpan的使用足够简单
 下面是GrandTimer的用法
+
 ```Swift
     var timer:GrandTimer?  //在ViewController里面声明一个变量
     var seco2 = 0
