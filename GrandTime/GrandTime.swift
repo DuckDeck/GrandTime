@@ -19,6 +19,10 @@ public enum DayOfWeek:Int{
 
 
 
+enum DisplayDateTimeStyleLanguage {
+    case cn,us
+}
+
 public let LeapYearMonth = [31,29,31,30,31,30,31,31,30,31,30,31]
 public let NotLeapYearMonth  = [31,28,31,30,31,30,31,31,30,31,30,31]
 
@@ -71,14 +75,18 @@ public func <=(lhs: DateTime, rhs: DateTime) -> Bool {
 public class DateTime: NSObject,Comparable {
     
     //最小是1970年1月1号上午8点整
-    public static let minDateTime = NSDate(timeIntervalSince1970: 0)
-    //直接使用Int.max是不行的，太大了，至少要除100000
-    public static let maxDateTime = NSDate(timeIntervalSince1970: NSTimeInterval(Int.max) / 100000)
+    public static let minDateTime = DateTime(tick: 0)
+    //这里最大值一直不明确，但是我已经试过了，iOS里面最大的NSDate是一个非常大有年份，我可以保证没有人可以用到的
+    public static let maxDateTime = DateTime(date: NSDate(timeIntervalSince1970: NSTimeInterval(Int.max) / 100000))
+    
+    private static let dateFormatter = NSDateFormatter()
+    
     private  static var  dateComponent = NSDateComponents()
     
+    
+    
    private var dateTime:NSDate{
-        // issue1 when in the init func .the disSet perocess do not work.
-        // need seek a way to fix it.
+        // issue1 when in the init func .the disSet perocess do not work. this indeed not word. but it affect
         didSet{
             internalDateComponent =  NSCalendar.currentCalendar().components([.Weekday,.WeekOfYear,.Year,.Month,.Day,.Hour,.Minute,.Second,.Nanosecond,.Quarter,.WeekOfMonth,.WeekOfYear], fromDate: dateTime)
         }
@@ -262,6 +270,8 @@ public class DateTime: NSObject,Comparable {
         }
     }
     
+    public var local = NSLocale(localeIdentifier: "zh_CN")
+    
     public static var  now:DateTime{
         return DateTime()
     }
@@ -382,6 +392,10 @@ public class DateTime: NSObject,Comparable {
         }
     }
     
+    public var date:NSDate{
+        return dateTime.copy() as! NSDate
+    }
+    
     public var weekDay:DayOfWeek{
         return DayOfWeek(rawValue: internalDateComponent.weekday)!
     }
@@ -409,11 +423,11 @@ public class DateTime: NSObject,Comparable {
     
     
     public override var description: String{
-        return self.format()
+        return format()
     }
     
     public override var debugDescription: String{
-        return self.description
+        return description
     }
     
     public var dayOfYear:Int{
@@ -444,25 +458,46 @@ public class DateTime: NSObject,Comparable {
         return year % 4 == 0 && year % 100 != 0
     }
     
-    // 这个逻辑有没有问题呢？好像没有，要测试 事实是有问题的
+    // 这里目前不能传负数，但是如果是Int，类型，是应该可以接受负数的
+    //这个地方有争议。很大有问题，不建议使用
     public func addMonth(months:Int)  {
-        var i = self.month
-        var currentYear = self.year
+        var i = month
+        var currentYear = year
         //可以将month转化成day
         var  days = 0
-        while i < months + self.month{
-            if DateTime.isLeapYeay(currentYear) {
-                days = days + LeapYearMonth[i % 12]
+        if months > 0 {
+            while i < months + month{
+                if DateTime.isLeapYeay(currentYear) {
+                    days = days + LeapYearMonth[i % 12]
+                }
+                else{
+                    days = days + NotLeapYearMonth[i % 12]
+                }
+                if i % 12 == 0 {
+                    currentYear = currentYear + 1
+                }
+                i = i + 1
             }
-            else{
-                days = days + NotLeapYearMonth[i % 12]
-            }
-            if i % 12 == 0 {
-                currentYear = currentYear + 1
-            }
-            i = i + 1
+            addDays(Double(days))
+
         }
-        addDays(Double(days))
+        
+        if months < 0 {
+                i = month - 1
+                while i >= months + month{
+                if DateTime.isLeapYeay(currentYear) {
+                    days = days + LeapYearMonth[abs(i) % 12]
+                }
+                else{
+                    days = days + NotLeapYearMonth[abs(i) % 12]
+                }
+                if abs(i) % 12 == 0 {
+                    currentYear = currentYear - 1
+                }
+                i = i - 1
+            }
+            addDays(Double(-days))
+        }
     }
     
     public func addYears(years:Int){
@@ -490,8 +525,10 @@ public class DateTime: NSObject,Comparable {
     }
     
     public func addMilliSeconds(milliSeconds:Double){
-        self.dateTime = self.dateTime.dateByAddingTimeInterval(milliSeconds / 1000)
+        dateTime = dateTime.dateByAddingTimeInterval(milliSeconds / 1000)
     }
+    
+    
     
    public static func compare(left:DateTime,right:DateTime)->Int{
         let result = left.dateTime.compare(right.dateTime)
@@ -533,24 +570,35 @@ public class DateTime: NSObject,Comparable {
         return DateTime.equals(self, right: time)
     }
     
+    //最好用一个单例子来实现NSDateFormatter，因为NSDateFormatter
+    //很吃资源
   public  func format(format:String = "yyyy-MM-dd HH:mm:ss:SSS") -> String {
-        let dateFormatter = NSDateFormatter()
-        dateFormatter.dateFormat = format
-        return dateFormatter.stringFromDate(self.dateTime)
+        DateTime.dateFormatter.dateFormat = format
+        return DateTime.dateFormatter.stringFromDate(dateTime)
     }
+    
+    public func format(dateFormat:NSDateFormatterStyle,timeFormat:NSDateFormatterStyle)->String{
+        DateTime.dateFormatter.locale = local
+        DateTime.dateFormatter.dateStyle = dateFormat
+        DateTime.dateFormatter.timeStyle = timeFormat
+        return DateTime.dateFormatter.stringFromDate(dateTime)
+    }
+    
+
     
   public  var dateString:String{
-        return self.format("yyyy-MM-dd")
+        return format("yyyy-MM-dd")
     }
     
- public   var timeString:String{
-        return self.format("HH:mm:ss")
+  public   var timeString:String{
+        return format("HH:mm:ss")
     }
     
+    
+    //这里还需要各种转化为时间的Style，需要补上
     
     
    public static func parse(time:String) -> DateTime? {
-        let dateFormatter = NSDateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
         if let date = dateFormatter.dateFromString(time){
             return DateTime(date: date)
@@ -561,7 +609,6 @@ public class DateTime: NSObject,Comparable {
     }
     
   public  static func parse(time:String,format:String) -> DateTime? {
-        let dateFormatter = NSDateFormatter()
         dateFormatter.dateFormat = format
         if let date = dateFormatter.dateFromString(time){
             return DateTime(date: date)
@@ -572,6 +619,6 @@ public class DateTime: NSObject,Comparable {
     }
     
     public override func copy() -> AnyObject {
-        return DateTime(date: self.dateTime)
+        return DateTime(date: dateTime)
     }
 }
