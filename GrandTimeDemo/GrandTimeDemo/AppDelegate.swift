@@ -52,30 +52,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         print("a>c:\(a>c)")
         print("a<c:\(a<c)")
         
-        a.addMonth(-1)
-       print("add addMonth:\(a)")
-        a.addMonth(-1)
-        print("add addMonth:\(a)")
-        a.addMonth(-1)
-        print("add addMonth:\(a)")
-        a.addMonth(-1)
-        print("add addMonth:\(a)")
-        a.addMonth(-1)
-        print("add addMonth:\(a)")
-        a.addMonth(-1)
-        print("add addMonth:\(a)")
-        a.addMonth(-1)
-        print("add addMonth:\(a)")
-        a.addMonth(-1)
-        print("add addMonth:\(a)")
-        a.addMonth(-1)
-        print("add addMonth:\(a)")
-        /*
+
+        
         
         
         a.addYears(1)   //加一年
-        print("add Years:\(a)")
-        a.addYears(-1)
         print("add Years:\(a)")
         a.addMonth(1)   // 加 一个月
         print("add addMonth:\(a)")
@@ -88,7 +69,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         a.addSeconds(1) // 加一秒
         print("add addSeconds:\(a)")
 
-        */
+        
         
         //下面获取部分
         print("获取i的各部分：year:\(i.year),   month:\(i.month),   day:\(i.day),   hour:\(i.hour),   minute:\(i.minute),   second:\(i.second),   minute:\(i.minute),   ticks:\(i.ticks),   ")
@@ -101,37 +82,57 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         i.minute = 23
         i.second = 12
         i.millisecond = 555
-        print(i)
-        print(i.weekDay)
-        print(i.quarter)
-        print(i.weekOfYear)
-        print(i.weekOfMonth)
-        print(i.ticks)
-        print(i.dayOfYear)
+         print("再次获取i的各部分：year:\(i.year),   month:\(i.month),   day:\(i.day),   hour:\(i.hour),   minute:\(i.minute),   second:\(i.second),   minute:\(i.minute),   ticks:\(i.ticks),   ")
+        //获取季度和星期相关数据
+        print("星期几:\(i.weekDay)")
+        print("第几季度:\(i.quarter)")
+        print("一年的第几周:\(i.weekOfYear)")
+        print("一个月的第几周:\(i.weekOfMonth)")
+        print("一年的第几天:\(i.dayOfYear)")
         
         
-        print(i.dateString)  //获取日期部分
-        print(i.timeString)     //获取时间部分
+        print("获取日期部分\(i.dateString)")  //获取日期部分
+        print("获取时间部分\(i.timeString)")     //获取时间部分
         
-        print(i.format())
-        
-        print(i.format(.LongStyle, timeFormat: .LongStyle))
+        print("默认格式\(i.format())")
+        print("自定义格式\(i.format("yyyy年MM月dd日#EEEE"))")
+        print("各种输出style的原生的一样")
+        print("LongStyle: \(i.format(.ShortStyle, timeFormat: .ShortStyle))")
+        print("LongStyle: \(i.format(.MediumStyle, timeFormat: .MediumStyle))")
+        print("LongStyle: \(i.format(.LongStyle, timeFormat: .LongStyle))")
+        print("LongStyle: \(i.format(.FullStyle, timeFormat: .FullStyle))")
         i.local = NSLocale(localeIdentifier: "en_US")
-        print(i.format(.LongStyle, timeFormat: .LongStyle))
+         print("把地区设为US")
+        print("LongStyle: \(i.format(.ShortStyle, timeFormat: .ShortStyle))")
+        print("LongStyle: \(i.format(.MediumStyle, timeFormat: .MediumStyle))")
+        print("LongStyle: \(i.format(.LongStyle, timeFormat: .LongStyle))")
+        print("LongStyle: \(i.format(.FullStyle, timeFormat: .FullStyle))")
+        
+        
         //下面是timespan
         print("----------------------------------下面是TimeSpan----------------------------------")
-         let o = TimeSpan()
+        //先看看构造函数
+        
+         let o = TimeSpan()                                                                 //直接初始化
         print(o)
-        let p = TimeSpan(days: 1, hours: 0, minutes: 11, seconds: 31)
+        let p = TimeSpan(days: 1, hours: 0, minutes: 11, seconds: 31)   //使用天，小时，分钟，秒来初始化
         print(p)
-        let q = TimeSpan(days: 20, hours: 11, minutes: 39, seconds: 21, milliseconds: 111)!
+        let q = TimeSpan(days: 20, hours: 11, minutes: 39, seconds: 21, milliseconds: 111)!   //使用天，小时，分钟，秒还有来初始化
         print(q)
-        let r = TimeSpan(ticks: 9826127)
+        let r = TimeSpan(ticks: 9826127)   //使用tick来初始化
         print(r)
         
         //下面获取部分
         print("获取i的各部分：  day:\(q.days),   hour:\(q.hours),   minute:\(q.minutes),   second:\(q.seconds),   minute:\(q.milliseconds),   ticks:\(q.ticks),   ")
         //获取计算的总体部分
+        print("获取i的各部分：  totalDays:\(q.totalDays),   totalHours:\(q.totalHours),   totalMinutes:\(q.totalMinutes),   second:\(q.totalSeconds)")
+        //单独设定属性
+        q.days = 4
+        q.hours = 22
+        q.minutes = 12
+        q.seconds = 32
+        q.milliseconds = 343
+        print("获取i的各部分：  day:\(q.days),   hour:\(q.hours),   minute:\(q.minutes),   second:\(q.seconds),   minute:\(q.milliseconds),   ticks:\(q.ticks),   ")
         print("获取i的各部分：  totalDays:\(q.totalDays),   totalHours:\(q.totalHours),   totalMinutes:\(q.totalMinutes),   second:\(q.totalSeconds)")
 
         //使用from 函数
@@ -146,13 +147,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         print(s)
         s = TimeSpan.fromTicks(123123123)//123123123 tick
         print(s)
-        print("加减")
-        s = s.add(r)
+        
+        print("下面看加减")
+        s = s.add(r)  //可以用这个加
         print(s)
         
-        s = s.subtract(r)
+        s = s.subtract(r)  //可以用这个减
         print(s)
-         print("+ - 也一样")
+         print("运算符+ - 也一样")
          s = s + r
         print(s)
         s = s - r

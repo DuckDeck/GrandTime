@@ -37,13 +37,14 @@ class TimerViewController: UIViewController {
         // I know wahy this weill not work .because the when out of the code bound, and there is no strong refrence to this timer. so the system will recycle the
         //timer .So it need a var to receive the Timer
         weak var weakSelf = self
-        //使用者要注意，这个timer本身是waak的，所以需要一个外部变量来强引用， 所以需要赋值给一个外部变量才行
+        //使用者要注意，这个timer本身是waak的，所以需要一个外部变量来强引用，
         //如果要让timer正确地释放内存，那么要使用weakself
       timer =  GrandTimer.every(TimeSpan.fromSeconds(1)) {
             weakSelf!.seco2 = weakSelf!.seco2 + 1
             weakSelf!.lblTimer.text = "\(weakSelf!.seco2)"
         }
         
+        timer?.invalidate()
  
 
         
