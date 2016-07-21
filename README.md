@@ -180,7 +180,7 @@ DateTime和TimeSpan的使用足够简单
             weakSelf!.seco2 = weakSelf!.seco2 + 1
             weakSelf!.lblTimer.text = "\(weakSelf!.seco2)"
         }
-
+//如果pop出来，timer是可以自动回收内存的
 ```
 
 ##Contact 
