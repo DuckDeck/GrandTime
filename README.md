@@ -1,6 +1,5 @@
 # GrandTime
 GrandTime 's purpose is simple,  replace NSDate and provide a user-friend , convenience and simple API ,mean while. It contain a weak timer to replace NSTimer 
-
 【开发GrandTime的目的很简单，是用来代替NSDate,它提供了用户友好的，方便的简单的API，同时还有一个弱Timer，用来代替NSTimer】
 
 GrandTime is a simple ,user-friendly and powerful Datetime tool. as you know, the original iOS date API is awful,very difficult to use. So a develop this GrandTime to replace the NSDate API（not all feature）. GrandTimer consist of DateTime,TimeSpan and GrandTimer. GrandTImer is a weak timer. it can automaticallu recyle the memory when the ViewController pop out.I will show how to use it in the demo code
