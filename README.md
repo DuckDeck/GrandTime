@@ -17,7 +17,7 @@ Xcode 7.3 and iOS 8.0 the last Swift version 【Xcode 7.3 and iOS 8.0 最新的S
 
 ##Installation【安装】
 + Installation with CocoaPods：pod 'GrandTime' 【使用Cocoapods安装， pod 'GrandTime'】
-+ Manual import, just need darg all the file to your project[手动导入，只要把项目拖进你的文件就行]
++ Manual import, just need darg all the file to your project【手动导入，只要把项目拖进你的文件就行】
 
 ##How To Use It 【怎么使用】
 Please see these code below【请参考以下代码】
