@@ -6,7 +6,7 @@ GrandTime is a simple ,user-friendly and powerful Datetime tool. as you know, th
 
 【GrandTime是一个简单的，用户友好的同时也很强力的时间工具，大家都明白的，iOS自带的NSDate类很不好，非常难用，所以我开发了GrandTime来代替NSDate(并非所有功能),GrandTime由DateTime,TimeSpan 和 GrandTimer组成， GrandTimer是一个弱Timer,它可以自动回收内存当ViewController被pop出去时，下面我将在demo代码里战展示】
 
-## Key Features
+## Key Features 【关键特点】
 + Very user-friend and simple API design【非常友好和简单的API设计】
 + Use TimeSpan to describe time interval【使用专门的类TimeSpan来表示时间间隔】
 + override operator, you can use operator manipulate DateTime very simple【重载了操作符，可以使用操作符来极为简单地操作DateTime】
