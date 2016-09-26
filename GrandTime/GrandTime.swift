@@ -10,11 +10,11 @@ import Foundation
 //这个类就完全参考C#的DateTime
 //基本功能先这样
 public enum  DateTimeKind:Int{
-    case Unspecified=0,Utc,Local
+    case unspecified=0,utc,local
 }
 
 public enum DayOfWeek:Int{
-    case Monday = 0,Tuesday,Wendesday,Thursday,Friday,Saturday,Sunday
+    case monday = 0,tuesday,wendesday,thursday,friday,saturday,sunday
 }
 
 
@@ -28,7 +28,7 @@ public let NotLeapYearMonth  = [31,28,31,30,31,30,31,31,30,31,30,31]
 
 //这个会有点难，要算的东西有点多
 public func -(left:DateTime,right:DateTime) -> TimeSpan? {
-    let ms = left.dateTime.timeIntervalSinceDate(right.dateTime)
+    let ms = left.dateTime.timeIntervalSince(right.dateTime)
     if ms < 0 {
         print("DateTime warning: left time must bigger then right time")
         return nil
@@ -51,54 +51,54 @@ public func -(left:DateTime,right:TimeSpan) -> DateTime {
 }
 
 public func >(lhs: DateTime, rhs: DateTime) -> Bool {
-    let ms = lhs.dateTime.timeIntervalSinceDate(rhs.dateTime)
+    let ms = lhs.dateTime.timeIntervalSince(rhs.dateTime)
     return ms > 0
 }
 
 public func >=(lhs: DateTime, rhs: DateTime) -> Bool {
-    let ms = lhs.dateTime.timeIntervalSinceDate(rhs.dateTime)
+    let ms = lhs.dateTime.timeIntervalSince(rhs.dateTime)
     return ms >= 0
 }
 
 public func <(lhs: DateTime, rhs: DateTime) -> Bool {
-    let ms = lhs.dateTime.timeIntervalSinceDate(rhs.dateTime)
+    let ms = lhs.dateTime.timeIntervalSince(rhs.dateTime)
     return ms < 0
 }
 
 
 public func <=(lhs: DateTime, rhs: DateTime) -> Bool {
-    let ms = lhs.dateTime.timeIntervalSinceDate(rhs.dateTime)
+    let ms = lhs.dateTime.timeIntervalSince(rhs.dateTime)
     return ms <= 0
 }
 
 
-public class DateTime: NSObject,Comparable {
+open class DateTime: NSObject,Comparable {
     
     //最小是1970年1月1号上午8点整
-    public static let minDateTime = DateTime(tick: 0)
+    open static let minDateTime = DateTime(tick: 0)
     //这里最大值一直不明确，但是我已经试过了，iOS里面最大的NSDate是一个非常大有年份，我可以保证没有人可以用到的
-    public static let maxDateTime = DateTime(date: NSDate(timeIntervalSince1970: NSTimeInterval(Int.max) / 100000))
+    open static let maxDateTime = DateTime(date: Date(timeIntervalSince1970: TimeInterval(Int.max) / 100000))
     
-    private static let dateFormatter = NSDateFormatter()
+    fileprivate static let dateFormatter = DateFormatter()
     
-    private  static var  dateComponent = NSDateComponents()
+    fileprivate  static var  dateComponent = DateComponents()
     
     
     
-   private var dateTime:NSDate{
+   fileprivate var dateTime:Date{
         // issue1 when in the init func .the disSet perocess do not work. this indeed not word. but it affect
         didSet{
-            internalDateComponent =  NSCalendar.currentCalendar().components([.Weekday,.WeekOfYear,.Year,.Month,.Day,.Hour,.Minute,.Second,.Nanosecond,.Quarter,.WeekOfMonth,.WeekOfYear], fromDate: dateTime)
+            internalDateComponent =  (Calendar.current as NSCalendar).components([.weekday,.weekOfYear,.year,.month,.day,.hour,.minute,.second,.nanosecond,.quarter,.weekOfMonth,.weekOfYear], from: dateTime)
         }
     }
-    public  var timeZone = NSTimeZone.systemTimeZone()  //这个要不要自己封装？ 先用系统的吧
-    public  var dateTImeKind = DateTimeKind.Unspecified
-    private var internalDateComponent:NSDateComponents
+    open  var timeZone = TimeZone.current  //这个要不要自己封装？ 先用系统的吧
+    open  var dateTImeKind = DateTimeKind.unspecified
+    fileprivate var internalDateComponent:DateComponents
     public  override init() {
-        internalDateComponent = NSDateComponents()
-        dateTime = NSDate()
+        internalDateComponent = DateComponents()
+        dateTime = Date()
         super.init()
-        internalDateComponent =  NSCalendar.currentCalendar().components([.Weekday,.WeekOfYear,.Year,.Month,.Day,.Hour,.Minute,.Second,.Nanosecond,.Quarter,.WeekOfMonth,.WeekOfYear], fromDate: dateTime)
+        internalDateComponent =  (Calendar.current as NSCalendar).components([.weekday,.weekOfYear,.year,.month,.day,.hour,.minute,.second,.nanosecond,.quarter,.weekOfMonth,.weekOfYear], from: dateTime)
     }
     
     
@@ -113,8 +113,8 @@ public class DateTime: NSObject,Comparable {
             print("DateTime warning: tick can not bigger than Int.max / 100000")
             return nil
         }
-        dateTime = NSDate(timeIntervalSince1970: Double(tick) / 1000.0)
-        internalDateComponent =  NSCalendar.currentCalendar().components([.Weekday,.WeekOfYear,.Year,.Month,.Day,.Hour,.Minute,.Second,.Nanosecond,.Quarter,.WeekOfMonth,.WeekOfYear], fromDate: dateTime)
+        dateTime = Date(timeIntervalSince1970: Double(tick) / 1000.0)
+        internalDateComponent =  (Calendar.current as NSCalendar).components([.weekday,.weekOfYear,.year,.month,.day,.hour,.minute,.second,.nanosecond,.quarter,.weekOfMonth,.weekOfYear], from: dateTime)
         
     }
     //暂时不要这个
@@ -126,10 +126,10 @@ public class DateTime: NSObject,Comparable {
     //        dateTime = NSDate(timeIntervalSince1970: Double(tick) / 1000.0)
     //    }
     
-    public convenience init(date:NSDate) {
+    public convenience init(date:Date) {
         self.init()
         dateTime = date
-        internalDateComponent =  NSCalendar.currentCalendar().components([.Weekday,.WeekOfYear,.Year,.Month,.Day,.Hour,.Minute,.Second,.Nanosecond,.Quarter,.WeekOfMonth,.WeekOfYear], fromDate: dateTime)
+        internalDateComponent =  (Calendar.current as NSCalendar).components([.weekday,.weekOfYear,.year,.month,.day,.hour,.minute,.second,.nanosecond,.quarter,.weekOfMonth,.weekOfYear], from: dateTime)
     }
     
     public   convenience init?(tickSinceNow:Int) {
@@ -139,13 +139,13 @@ public class DateTime: NSObject,Comparable {
             print("DateTime warning: tickSinceNow can not bigger than Int.max / 100000")
             return nil
         }
-        let interval = Int(NSDate().timeIntervalSince1970)
+        let interval = Int(Date().timeIntervalSince1970)
         if tickSinceNow < -(interval * 1000) {
             print("DateTime warning: tickSinceNow can not less than now to 1970 ticks")
             return nil
         }
-        dateTime = NSDate(timeIntervalSinceNow: Double(tickSinceNow) / 1000.0)
-        internalDateComponent =  NSCalendar.currentCalendar().components([.Weekday,.WeekOfYear,.Year,.Month,.Day,.Hour,.Minute,.Second,.Nanosecond,.Quarter,.WeekOfMonth,.WeekOfYear], fromDate: dateTime)
+        dateTime = Date(timeIntervalSinceNow: Double(tickSinceNow) / 1000.0)
+        internalDateComponent =  (Calendar.current as NSCalendar).components([.weekday,.weekOfYear,.year,.month,.day,.hour,.minute,.second,.nanosecond,.quarter,.weekOfMonth,.weekOfYear], from: dateTime)
     }
     
     
@@ -159,8 +159,8 @@ public class DateTime: NSObject,Comparable {
             print("DateTime warning: timestamp can not bigger than Int.max / 100000")
             return nil
         }
-        dateTime = NSDate(timeIntervalSince1970: NSTimeInterval(timestamp))
-        internalDateComponent =  NSCalendar.currentCalendar().components([.Weekday,.WeekOfYear,.Year,.Month,.Day,.Hour,.Minute,.Second,.Nanosecond,.Quarter,.WeekOfMonth,.WeekOfYear], fromDate: dateTime)
+        dateTime = Date(timeIntervalSince1970: TimeInterval(timestamp))
+        internalDateComponent =  (Calendar.current as NSCalendar).components([.weekday,.weekOfYear,.year,.month,.day,.hour,.minute,.second,.nanosecond,.quarter,.weekOfMonth,.weekOfYear], from: dateTime)
     }
     public convenience init?(year:Int,month:Int,day:Int) {
         self.init()
@@ -200,9 +200,9 @@ public class DateTime: NSObject,Comparable {
         DateTime.dateComponent.year = year
         DateTime.dateComponent.month = month
         DateTime.dateComponent.day = day
-        if let date = NSCalendar.currentCalendar().dateFromComponents(DateTime.dateComponent){
+        if let date = Calendar.current.date(from: DateTime.dateComponent){
             dateTime = date
-            internalDateComponent =  NSCalendar.currentCalendar().components([.Weekday,.WeekOfYear,.Year,.Month,.Day,.Hour,.Minute,.Second,.Nanosecond,.Quarter,.WeekOfMonth,.WeekOfYear], fromDate: dateTime)
+            internalDateComponent =  (Calendar.current as NSCalendar).components([.weekday,.weekOfYear,.year,.month,.day,.hour,.minute,.second,.nanosecond,.quarter,.weekOfMonth,.weekOfYear], from: dateTime)
         }
         else{
             print("DateTime warning: time Component data have issue")
@@ -239,9 +239,9 @@ public class DateTime: NSObject,Comparable {
         DateTime.dateComponent.hour = hour
         DateTime.dateComponent.minute = minute
         DateTime.dateComponent.second = second
-        if let date = NSCalendar.currentCalendar().dateFromComponents(DateTime.dateComponent){
+        if let date = Calendar.current.date(from: DateTime.dateComponent){
             dateTime = date
-            internalDateComponent =  NSCalendar.currentCalendar().components([.Weekday,.WeekOfYear,.Year,.Month,.Day,.Hour,.Minute,.Second,.Nanosecond,.Quarter,.WeekOfMonth,.WeekOfYear], fromDate: dateTime)
+            internalDateComponent =  (Calendar.current as NSCalendar).components([.weekday,.weekOfYear,.year,.month,.day,.hour,.minute,.second,.nanosecond,.quarter,.weekOfMonth,.weekOfYear], from: dateTime)
         }
         else{
             print("DateTime warning: time Component data have issue")
@@ -260,9 +260,9 @@ public class DateTime: NSObject,Comparable {
             return nil
         }
         DateTime.dateComponent.nanosecond = millisecond
-        if let date = NSCalendar.currentCalendar().dateFromComponents(DateTime.dateComponent){
+        if let date = Calendar.current.date(from: DateTime.dateComponent){
             dateTime = date
-            internalDateComponent =  NSCalendar.currentCalendar().components([.Weekday,.WeekOfYear,.Year,.Month,.Day,.Hour,.Minute,.Second,.Nanosecond,.Quarter,.WeekOfMonth,.WeekOfYear], fromDate: dateTime)
+            internalDateComponent =  (Calendar.current as NSCalendar).components([.weekday,.weekOfYear,.year,.month,.day,.hour,.minute,.second,.nanosecond,.quarter,.weekOfMonth,.weekOfYear], from: dateTime)
         }
         else{
             print("DateTime warning: time Component data have issue")
@@ -270,29 +270,29 @@ public class DateTime: NSObject,Comparable {
         }
     }
     
-    public var local = NSLocale(localeIdentifier: "zh_CN")
+    open var local = Locale(identifier: "zh_CN")
     
-    public static var  now:DateTime{
+    open static var  now:DateTime{
         return DateTime()
     }
     
-    public var dayOfWeek:DayOfWeek{
+    open var dayOfWeek:DayOfWeek{
         get{
-            let cal = NSCalendar.currentCalendar()
-            let cmp = cal.component([.Weekday], fromDate: dateTime)
+            let cal = Calendar.current
+            let cmp = (cal as NSCalendar).component([.weekday], from: dateTime)
             return DayOfWeek(rawValue: cmp)!
         }
     }
     
     
     
-    public var year:Int{
+    open var year:Int{
         get{
-            return internalDateComponent.year
+            return internalDateComponent.year!
         }
         set{
             internalDateComponent.year = newValue
-            if let date = NSCalendar.currentCalendar().dateFromComponents(internalDateComponent){
+            if let date = Calendar.current.date(from: internalDateComponent){
                 dateTime = date
             }
             else{
@@ -301,13 +301,13 @@ public class DateTime: NSObject,Comparable {
         }
     }
     
-    public var month:Int{
+    open var month:Int{
         get{
-            return internalDateComponent.month
+            return internalDateComponent.month!
         }
         set{
             internalDateComponent.month = newValue
-            if let date = NSCalendar.currentCalendar().dateFromComponents(internalDateComponent){
+            if let date = Calendar.current.date(from: internalDateComponent){
                 dateTime = date
             }
             else{
@@ -317,13 +317,13 @@ public class DateTime: NSObject,Comparable {
     }
     
     
-    public var day:Int{
+    open var day:Int{
         get{
-            return internalDateComponent.day
+            return internalDateComponent.day!
         }
         set{
             internalDateComponent.day = newValue
-            if let date = NSCalendar.currentCalendar().dateFromComponents(internalDateComponent){
+            if let date = Calendar.current.date(from: internalDateComponent){
                 dateTime = date
             }
             else{
@@ -332,13 +332,13 @@ public class DateTime: NSObject,Comparable {
         }
     }
     
-    public var hour:Int{
+    open var hour:Int{
         get{
-            return internalDateComponent.hour
+            return internalDateComponent.hour!
         }
         set{
             internalDateComponent.hour = newValue
-            if let date = NSCalendar.currentCalendar().dateFromComponents(internalDateComponent){
+            if let date = Calendar.current.date(from: internalDateComponent){
                 dateTime = date
             }
             else{
@@ -347,13 +347,13 @@ public class DateTime: NSObject,Comparable {
         }
     }
     
-    public var minute:Int{
+    open var minute:Int{
         get{
-            return internalDateComponent.minute
+            return internalDateComponent.minute!
         }
         set{
             internalDateComponent.minute = newValue
-            if let date = NSCalendar.currentCalendar().dateFromComponents(internalDateComponent){
+            if let date = Calendar.current.date(from: internalDateComponent){
                 dateTime = date
             }
             else{
@@ -362,13 +362,13 @@ public class DateTime: NSObject,Comparable {
         }
     }
     
-    public var second:Int{
+    open var second:Int{
         get{
-            return internalDateComponent.second
+            return internalDateComponent.second!
         }
         set{
             internalDateComponent.second = newValue
-            if let date = NSCalendar.currentCalendar().dateFromComponents(internalDateComponent){
+            if let date = Calendar.current.date(from: internalDateComponent){
                 dateTime = date
             }
             else{
@@ -377,13 +377,13 @@ public class DateTime: NSObject,Comparable {
         }
     }
     
-    public var millisecond:Int{
+    open var millisecond:Int{
         get{
-            return internalDateComponent.nanosecond
+            return internalDateComponent.nanosecond!
         }
         set{
             internalDateComponent.nanosecond = newValue * 1000000
-            if let date = NSCalendar.currentCalendar().dateFromComponents(internalDateComponent){
+            if let date = Calendar.current.date(from: internalDateComponent){
                 dateTime = date
             }
             else{
@@ -392,27 +392,27 @@ public class DateTime: NSObject,Comparable {
         }
     }
     
-    public var date:NSDate{
-        return dateTime.copy() as! NSDate
+    open var date:Date{
+        return (dateTime as NSDate).copy() as! Date
     }
     
-    public var weekDay:DayOfWeek{
-        return DayOfWeek(rawValue: internalDateComponent.weekday)!
+    open var weekDay:DayOfWeek{
+        return DayOfWeek(rawValue: internalDateComponent.weekday!)!
     }
     
-    public var quarter:Int{
-        return  internalDateComponent.quarter
+    open var quarter:Int{
+        return  internalDateComponent.quarter!
     }
     
-    public var weekOfMonth:Int{
-        return internalDateComponent.weekOfMonth
+    open var weekOfMonth:Int{
+        return internalDateComponent.weekOfMonth!
     }
     
-    public var weekOfYear:Int{
-        return internalDateComponent.weekOfYear
+    open var weekOfYear:Int{
+        return internalDateComponent.weekOfYear!
     }
     
-    public var ticks:Int{
+    open var ticks:Int{
         return Int(dateTime.timeIntervalSince1970 * Double(1000))
     }
     
@@ -422,15 +422,15 @@ public class DateTime: NSObject,Comparable {
     //    }
     
     
-    public override var description: String{
+    open override var description: String{
         return format()
     }
     
-    public override var debugDescription: String{
+    open override var debugDescription: String{
         return description
     }
     
-    public var dayOfYear:Int{
+    open var dayOfYear:Int{
         get{
             let month = self.month
             let day = self.day
@@ -454,13 +454,13 @@ public class DateTime: NSObject,Comparable {
         }
     }
     
-    public static func isLeapYeay(year:Int)->Bool{
+    open static func isLeapYeay(_ year:Int)->Bool{
         return year % 4 == 0 && year % 100 != 0
     }
     
     // 这里目前不能传负数，但是如果是Int，类型，是应该可以接受负数的
     //这个地方有争议。很大有问题，不建议使用
-    public func addMonth(months:Int)  {
+    open func addMonth(_ months:Int)  {
         var i = month
         var currentYear = year
         //可以将month转化成day
@@ -500,7 +500,7 @@ public class DateTime: NSObject,Comparable {
         }
     }
     
-    public func addYears(years:Int){
+    open func addYears(_ years:Int){
         if year + years > 1000000 {
             print("DateTime warning: years is too big")
             return
@@ -508,44 +508,44 @@ public class DateTime: NSObject,Comparable {
         addMonth(years * 12) //这样应该要吧
     }
     
-    public func addDays(days:Double)  {
+    open func addDays(_ days:Double)  {
         addMilliSeconds(days * Double(TickPerDay))
     }
     
-    public func addHours(hours:Double)  {
+    open func addHours(_ hours:Double)  {
          addMilliSeconds(hours * Double(TickPerHour))
     }
     
-    public func addMinutes(minutes:Double) {
+    open func addMinutes(_ minutes:Double) {
         addMilliSeconds(minutes * Double(TickPerMinute))
     }
     
-    public func addSeconds(seconds:Double)  {
+    open func addSeconds(_ seconds:Double)  {
         addMilliSeconds(seconds * Double(TickPerSecond))
     }
     
-    public func addMilliSeconds(milliSeconds:Double){
-        dateTime = dateTime.dateByAddingTimeInterval(milliSeconds / 1000)
+    open func addMilliSeconds(_ milliSeconds:Double){
+        dateTime = dateTime.addingTimeInterval(milliSeconds / 1000)
     }
     
     
     
-   public static func compare(left:DateTime,right:DateTime)->Int{
+   open static func compare(_ left:DateTime,right:DateTime)->Int{
         let result = left.dateTime.compare(right.dateTime)
-        if result == .OrderedAscending {
+        if result == .orderedAscending {
             return -1
         }
-        else if result == .OrderedDescending{
+        else if result == .orderedDescending{
             return 1
         }
         return 0
     }
     
-  public  func compareTo(time:DateTime) -> Int {
+  open  func compareTo(_ time:DateTime) -> Int {
         return DateTime.compare(self, right: time)
     }
     
- public   func daysInMonth(year:Int,month:Int) -> Int? {
+ open   func daysInMonth(_ year:Int,month:Int) -> Int? {
          if month < 1 {
             print("DateTime warning: month can not less than 1")
             return nil
@@ -562,35 +562,35 @@ public class DateTime: NSObject,Comparable {
         }
     }
     
-   public static func equals(left:DateTime,right:DateTime)->Bool{
+   open static func equals(_ left:DateTime,right:DateTime)->Bool{
         return DateTime.compare(left, right: right) == 0
     }
     
-  public  func  equals(time:DateTime) -> Bool {
+  open  func  equals(_ time:DateTime) -> Bool {
         return DateTime.equals(self, right: time)
     }
     
     //最好用一个单例子来实现NSDateFormatter，因为NSDateFormatter
     //很吃资源
-  public  func format(format:String = "yyyy-MM-dd HH:mm:ss:SSS") -> String {
+  open  func format(_ format:String = "yyyy-MM-dd HH:mm:ss:SSS") -> String {
         DateTime.dateFormatter.dateFormat = format
-        return DateTime.dateFormatter.stringFromDate(dateTime)
+        return DateTime.dateFormatter.string(from: dateTime)
     }
     
-    public func format(dateFormat:NSDateFormatterStyle,timeFormat:NSDateFormatterStyle)->String{
+    open func format(_ dateFormat:DateFormatter.Style,timeFormat:DateFormatter.Style)->String{
         DateTime.dateFormatter.locale = local
         DateTime.dateFormatter.dateStyle = dateFormat
         DateTime.dateFormatter.timeStyle = timeFormat
-        return DateTime.dateFormatter.stringFromDate(dateTime)
+        return DateTime.dateFormatter.string(from: dateTime)
     }
     
 
     
-  public  var dateString:String{
+  open  var dateString:String{
         return format("yyyy-MM-dd")
     }
     
-  public   var timeString:String{
+  open   var timeString:String{
         return format("HH:mm:ss")
     }
     
@@ -598,9 +598,9 @@ public class DateTime: NSObject,Comparable {
     //这里还需要各种转化为时间的Style，需要补上
     
     
-   public static func parse(time:String) -> DateTime? {
+   open static func parse(_ time:String) -> DateTime? {
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-        if let date = dateFormatter.dateFromString(time){
+        if let date = dateFormatter.date(from: time){
             return DateTime(date: date)
         }
         else{
@@ -608,9 +608,9 @@ public class DateTime: NSObject,Comparable {
         }
     }
     
-  public  static func parse(time:String,format:String) -> DateTime? {
+  open  static func parse(_ time:String,format:String) -> DateTime? {
         dateFormatter.dateFormat = format
-        if let date = dateFormatter.dateFromString(time){
+        if let date = dateFormatter.date(from: time){
             return DateTime(date: date)
         }
         else{
@@ -618,7 +618,7 @@ public class DateTime: NSObject,Comparable {
         }
     }
     
-    public override func copy() -> AnyObject {
+    open override func copy() -> Any {
         return DateTime(date: dateTime)
     }
 }

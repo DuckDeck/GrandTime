@@ -8,7 +8,7 @@
 
 import Foundation
 
-public class GrandTimer: NSObject {
+open class GrandTimer: NSObject {
 
     struct timerFlags {
        static  var  timerIsInvalid:UInt32 = 0
@@ -19,14 +19,14 @@ public class GrandTimer: NSObject {
     var selector:Selector?
     internal var userInfo:AnyObject?
     var repeats:Bool = false
-    var privateSerialQueue:dispatch_queue_t?
-    var timer:dispatch_source_t?
+    var privateSerialQueue:DispatchQueue?
+    var timer:DispatchSource?
     var block:(()->Void)?
-   private override init() {
+   fileprivate override init() {
         super.init()
     }
     
-   public convenience init(timespan:TimeSpan,target:AnyObject,sel:Selector,userInfo:AnyObject?,repeats:Bool,dispatchQueue:dispatch_queue_t){
+   public convenience init(timespan:TimeSpan,target:AnyObject,sel:Selector,userInfo:AnyObject?,repeats:Bool,dispatchQueue:DispatchQueue){
         self.init()
         self.timeSpan = timespan
         self.target = target
@@ -34,46 +34,46 @@ public class GrandTimer: NSObject {
         self.userInfo = userInfo
         self.repeats = repeats
         let privateQueueName = "grandTime\(self)"
-        self.privateSerialQueue = dispatch_queue_create(privateQueueName.cStringUsingEncoding(NSUTF8StringEncoding)!, DISPATCH_QUEUE_SERIAL)
-        dispatch_set_target_queue(self.privateSerialQueue, dispatchQueue)
-        self.timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, self.privateSerialQueue)
+        self.privateSerialQueue = DispatchQueue(label: privateQueueName.cString(using: String.Encoding.utf8)!, attributes: [])
+        self.privateSerialQueue?.setTarget(queue: dispatchQueue)
+        self.timer = DispatchSource.makeTimerSource(flags: DispatchSource.TimerFlags(rawValue: UInt(0)), queue: self.privateSerialQueue) /*Migrator FIXME: Use DispatchSourceTimer to avoid the cast*/ as! DispatchSource
     }
     
-    public convenience init(timespan:TimeSpan,block:()->Void, repeats:Bool,dispatchQueue:dispatch_queue_t) {
+    public convenience init(timespan:TimeSpan,block:@escaping ()->Void, repeats:Bool,dispatchQueue:DispatchQueue) {
          self.init()
         self.timeSpan = timespan
         self.block = block
         self.repeats = repeats
         let privateQueueName = "grandTime\(self)"
-        self.privateSerialQueue = dispatch_queue_create(privateQueueName.cStringUsingEncoding(NSUTF8StringEncoding)!, DISPATCH_QUEUE_SERIAL)
-        dispatch_set_target_queue(self.privateSerialQueue, dispatchQueue)
-        self.timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, self.privateSerialQueue)
+        self.privateSerialQueue = DispatchQueue(label: privateQueueName.cString(using: String.Encoding.utf8)!, attributes: [])
+        self.privateSerialQueue?.setTarget(queue: dispatchQueue)
+        self.timer = DispatchSource.makeTimerSource(flags: DispatchSource.TimerFlags(rawValue: UInt(0)), queue: self.privateSerialQueue) /*Migrator FIXME: Use DispatchSourceTimer to avoid the cast*/ as! DispatchSource
     }
     
-  public  static func scheduleTimerWithTimeSpan(timespan:TimeSpan,target:AnyObject,sel:Selector,userInfo:AnyObject?,repeats:Bool,dispatchQueue:dispatch_queue_t)->GrandTimer{
+  open  static func scheduleTimerWithTimeSpan(_ timespan:TimeSpan,target:AnyObject,sel:Selector,userInfo:AnyObject?,repeats:Bool,dispatchQueue:DispatchQueue)->GrandTimer{
         let timer = GrandTimer(timespan: timespan, target: target, sel: sel, userInfo: userInfo, repeats: repeats, dispatchQueue: dispatchQueue)
         timer.schedule()
         return timer
     }
     
-    public  static func scheduleTimerWithTimeSpan(timespan:TimeSpan,block:()->Void,repeats:Bool,dispatchQueue:dispatch_queue_t)->GrandTimer{
+    open  static func scheduleTimerWithTimeSpan(_ timespan:TimeSpan,block:@escaping ()->Void,repeats:Bool,dispatchQueue:DispatchQueue)->GrandTimer{
         let timer = GrandTimer(timespan: timespan, block: block, repeats: repeats, dispatchQueue: dispatchQueue)
         timer.schedule()
         return timer
     }
     
-  public  static func after(timeSpan:TimeSpan,block:()->Void)->GrandTimer{
+  open  static func after(_ timeSpan:TimeSpan,block:@escaping ()->Void)->GrandTimer{
         let privateQueueName = "grandTimeAfter\(arc4random())"
-        let dispatch = dispatch_queue_create(privateQueueName, DISPATCH_QUEUE_CONCURRENT)
+        let dispatch = DispatchQueue(label: privateQueueName, attributes: DispatchQueue.Attributes.concurrent)
         let timer = GrandTimer.scheduleTimerWithTimeSpan(timeSpan, block: block, repeats: false, dispatchQueue: dispatch)
 
         
         return timer
     }
     
-   public static func every(timeSpan:TimeSpan,block:()->Void)->GrandTimer{
+   open static func every(_ timeSpan:TimeSpan,block:@escaping ()->Void)->GrandTimer{
         let privateQueueName = "grandTimeEvery\(arc4random())"
-        let dispatch = dispatch_queue_create(privateQueueName, DISPATCH_QUEUE_CONCURRENT)
+        let dispatch = DispatchQueue(label: privateQueueName, attributes: DispatchQueue.Attributes.concurrent)
         let timer = GrandTimer.scheduleTimerWithTimeSpan(timeSpan, block: block, repeats: true, dispatchQueue: dispatch)
         return timer
     }
@@ -91,51 +91,51 @@ public class GrandTimer: NSObject {
      //   print("11")
  //   }
     
-  public  func schedule() {
+  open  func schedule() {
         resetTimerProperties()
         weak var weakSelf = self
-        dispatch_source_set_event_handler(self.timer!) { 
+        self.timer!.setEventHandler { 
             weakSelf?.timerFired()
         }
-        dispatch_resume(self.timer!)
+        self.timer!.resume()
     }
     
     deinit{
         invalidate()
     }
     
-  public  func fire() {
+  open  func fire() {
         timerFired()
     }
     
-  public  func invalidate() {
+  open  func invalidate() {
         if !OSAtomicTestAndSetBarrier(7, &timerFlags.timerIsInvalid) {
             if  let timer = self.timer{
-                dispatch_async(self.privateSerialQueue!, {
-                    dispatch_source_cancel(timer)
+                self.privateSerialQueue!.async(execute: {
+                    timer.cancel()
                 })
             }
         }
     }
     
-  public  func timerFired() {
+  open  func timerFired() {
         if OSAtomicAnd32OrigBarrier(1, &timerFlags.timerIsInvalid) < 0{
             return
         }
         if let blk = block{
-            dispatch_async(dispatch_get_main_queue(), { 
+            DispatchQueue.main.async(execute: { 
                   blk()
             })
           
         }
-        self.target?.performSelector(self.selector!, withObject: self)
+        self.target?.perform(self.selector!, with: self)
         if !self.repeats {
             self.invalidate()
         }
     }
     
     var _tolerance:TimeSpan = TimeSpan()
-   public var tolerance:TimeSpan?{
+   open var tolerance:TimeSpan?{
         set{
             objc_sync_enter(self)
             if newValue != nil && _tolerance != newValue{
@@ -155,10 +155,10 @@ public class GrandTimer: NSObject {
     func resetTimerProperties()  {
         let intervalInNanoseconds:Int64 = Int64(self.timeSpan!.ticks) * 1000000
         let toleranceInNanoseconds:UInt64 = UInt64(self.tolerance!.ticks) * 1000000
-        dispatch_source_set_timer(self.timer!, dispatch_time(DISPATCH_TIME_NOW, intervalInNanoseconds), UInt64(intervalInNanoseconds), toleranceInNanoseconds)
+        self.timer!.setTimer(start: DispatchTime.now() + Double(intervalInNanoseconds) / Double(NSEC_PER_SEC), interval: UInt64(intervalInNanoseconds), leeway: toleranceInNanoseconds)
     }
     
-    override public var description: String{
+    override open var description: String{
         return "timeSpan = \(timeSpan) target = \(target) selector = \(selector) userinfo = \(userInfo) repeats = \(repeats) timer= \(timer)"
     }
     

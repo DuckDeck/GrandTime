@@ -53,13 +53,13 @@ class TimerViewController: UIViewController {
     
     func tick()  {
         seco = seco + 1
-        dispatch_async(dispatch_get_main_queue()) { 
+        DispatchQueue.main.async { 
                 self.lblTimer.text = "\(self.seco)"
         }
     }
 
     deinit{
-        print("\(self.dynamicType)) the view deinit which means the timer release in the viewcontrollre")
+        print("\(type(of: self))) the view deinit which means the timer release in the viewcontrollre")
     }
     
     override func didReceiveMemoryWarning() {

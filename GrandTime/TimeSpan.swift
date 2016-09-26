@@ -47,17 +47,17 @@ public func == (lhs: TimeSpan, rhs: TimeSpan) -> Bool
 }
 
 
-public class TimeSpan: NSObject,Comparable {
+open class TimeSpan: NSObject,Comparable {
     
     
-  public  static let Max = TimeSpan(days: 100000, hours: 23, minutes: 59, seconds: 59, milliseconds: 999)
-  public  static let Zero = TimeSpan(days: 0, hours: 0, minutes: 0, seconds: 0, milliseconds: 0)
-  private  var _day = 0
-  private  var _hour = 0
-  private  var _minute = 0
-   private var _second = 0
-  private  var _millisecond = 0
-  private  var _ticks = 0
+  open  static let Max = TimeSpan(days: 100000, hours: 23, minutes: 59, seconds: 59, milliseconds: 999)
+  open  static let Zero = TimeSpan(days: 0, hours: 0, minutes: 0, seconds: 0, milliseconds: 0)
+  fileprivate  var _day = 0
+  fileprivate  var _hour = 0
+  fileprivate  var _minute = 0
+   fileprivate var _second = 0
+  fileprivate  var _millisecond = 0
+  fileprivate  var _ticks = 0
   public  override init() {
         super.init()
     }
@@ -125,7 +125,7 @@ public class TimeSpan: NSObject,Comparable {
         _ticks = _ticks + milliseconds
     }
     
-    public var days:Int{
+    open var days:Int{
         get{
             return _day
         }
@@ -137,7 +137,7 @@ public class TimeSpan: NSObject,Comparable {
         }
     }
     
-    public var hours:Int{
+    open var hours:Int{
         get{
             return _hour
         }
@@ -149,7 +149,7 @@ public class TimeSpan: NSObject,Comparable {
         }
     }
     
-    public var minutes:Int{
+    open var minutes:Int{
         get{
             return _minute
         }
@@ -161,7 +161,7 @@ public class TimeSpan: NSObject,Comparable {
         }
     }
     
-    public var seconds:Int{
+    open var seconds:Int{
         get{
             return _second
         }
@@ -174,7 +174,7 @@ public class TimeSpan: NSObject,Comparable {
         }
     }
     
-    public var milliseconds:Int{
+    open var milliseconds:Int{
         get{
             return _millisecond
         }
@@ -186,7 +186,7 @@ public class TimeSpan: NSObject,Comparable {
         }
     }
     
-    public var ticks:Int{
+    open var ticks:Int{
         get{
             return _ticks
         }
@@ -196,23 +196,23 @@ public class TimeSpan: NSObject,Comparable {
         }
     }
     
-    public var totalDays:Double{
+    open var totalDays:Double{
         return Double(_ticks) / Double(TickPerDay)
     }
     
-    public var totalHours:Double{
+    open var totalHours:Double{
         return Double(_ticks) / Double(TickPerHour)
     }
     
-    public var totalMinutes:Double{
+    open var totalMinutes:Double{
         return Double(_ticks) / Double(TickPerMinute)
     }
     
-    public var totalSeconds:Double{
+    open var totalSeconds:Double{
         return Double(_ticks) / Double(TickPerSecond)
     }
     
-    public static func compare(t1:TimeSpan,t2:TimeSpan)->Int{
+    open static func compare(_ t1:TimeSpan,t2:TimeSpan)->Int{
         if t1.ticks > t2.ticks {
             return 1
         }
@@ -222,30 +222,30 @@ public class TimeSpan: NSObject,Comparable {
         return 0
     }
     
-    public static func equl(t1:TimeSpan,t2:TimeSpan)->Bool{
+    open static func equl(_ t1:TimeSpan,t2:TimeSpan)->Bool{
        return t1.ticks == t2.ticks
     }
 
-    public static func fromDays(days:Double)->TimeSpan{
+    open static func fromDays(_ days:Double)->TimeSpan{
         assert(days > 0, "days must > 0")
         return TimeSpan(ticks: Int(days * Double(TickPerDay)))
     }
     
-    public static func fromHours(hours:Double)->TimeSpan{
+    open static func fromHours(_ hours:Double)->TimeSpan{
         assert(hours > 0, "hours must > 0") //这里就不需要<24了
         return TimeSpan(ticks: Int(hours * Double(TickPerHour)))
     }
     
-    public static func fromMinuts(minutes:Double)->TimeSpan{
+    open static func fromMinuts(_ minutes:Double)->TimeSpan{
         assert(minutes > 0, "minutes must > 0")//这里就不需要<60了
         return TimeSpan(ticks: Int(minutes * Double(TickPerMinute)))
     }
     
-    public static func fromSeconds(seconds:Double)->TimeSpan{
+    open static func fromSeconds(_ seconds:Double)->TimeSpan{
         assert(seconds > 0, "minutes must > 0")//这里就不需要<60了
         return TimeSpan(ticks: Int(seconds * Double(TickPerSecond)))
     }
-    public static func fromTicks(ticks:Int)->TimeSpan{
+    open static func fromTicks(_ ticks:Int)->TimeSpan{
         assert(ticks > 0, "minutes must > 0")//这里就不需要<60了
         return TimeSpan(ticks: ticks)
     }
@@ -254,24 +254,24 @@ public class TimeSpan: NSObject,Comparable {
     //这个地方不太好处理
     //这里可能要用正则，字符單解析一直是个大难题，这就是为什么编译器这么难写
     //C#里面有-的TimeSpan 我觉得没有必要
-    public static func parse(time:String)->TimeSpan?{
+    open static func parse(_ time:String)->TimeSpan?{
         
         return nil //时间不够，暂时不做
     }
     
     //借NSDateFormatter这个来用一用
-    public static func parse(time:String,format:NSDateFormatter)->NSTimer?{
+    open static func parse(_ time:String,format:DateFormatter)->Timer?{
         return nil //时间不够，暂时不做
     }
     
-    public func add(time:TimeSpan)->TimeSpan{
+    open func add(_ time:TimeSpan)->TimeSpan{
         let tick = time.ticks + ticks
         assert(ticks < TimeSpan.Max!.ticks,"the added value must < max")
         return TimeSpan(ticks: tick)
     }
     
     
-  public  func compareTo(time:TimeSpan) -> Int {
+  open  func compareTo(_ time:TimeSpan) -> Int {
         return TimeSpan.compare(self, t2: time)
     }
     
@@ -287,14 +287,14 @@ public class TimeSpan: NSObject,Comparable {
 //    }
     
 
-  public  func subtract(time:TimeSpan) -> TimeSpan {
+  open  func subtract(_ time:TimeSpan) -> TimeSpan {
         let tick = ticks - time.ticks
         assert(ticks > 0,"tick must > 0")
         return TimeSpan(ticks: tick)
     }
     
 
-    public  override var description: String{
+    open  override var description: String{
         get{
             //let hour = String(format: "%02d", hours)
             let minute = String(format: "%02d", minutes)
@@ -312,7 +312,7 @@ public class TimeSpan: NSObject,Comparable {
   
   
     
-    private func setTimes(){
+    fileprivate func setTimes(){
         if _ticks > 0 {
             _day = _ticks / TickPerDay
             _hour = (_ticks - _day * TickPerDay) / TickPerHour
