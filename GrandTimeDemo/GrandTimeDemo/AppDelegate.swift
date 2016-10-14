@@ -101,7 +101,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         print("LongStyle: \(i.format(.medium, timeFormat: .medium))")
         print("LongStyle: \(i.format(.long, timeFormat: .long))")
         print("LongStyle: \(i.format(.full, timeFormat: .full))")
-        i.local = Locale(localeIdentifier: "en_US")
+        i.local = Locale(identifier: "en_US")
          print("把地区设为US")
         print("LongStyle: \(i.format(.short, timeFormat: .short))")
         print("LongStyle: \(i.format(.medium, timeFormat: .medium))")

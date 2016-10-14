@@ -33,10 +33,11 @@ open class GrandTimer: NSObject {
         self.selector = sel
         self.userInfo = userInfo
         self.repeats = repeats
-        let privateQueueName = "grandTime\(self)"
-        self.privateSerialQueue = DispatchQueue(label: privateQueueName.cString(using: String.Encoding.utf8)!, attributes: [])
-        self.privateSerialQueue?.setTarget(queue: dispatchQueue)
-        self.timer = DispatchSource.makeTimerSource(flags: DispatchSource.TimerFlags(rawValue: UInt(0)), queue: self.privateSerialQueue) /*Migrator FIXME: Use DispatchSourceTimer to avoid the cast*/ as! DispatchSource
+//        let privateQueueName = "grandTime\(self)"
+//        self.privateSerialQueue = DispatchQueue(label: privateQueueName, attributes: [])
+//        self.privateSerialQueue?.setTarget(queue: dispatchQueue)
+        self.privateSerialQueue = dispatchQueue
+        self.timer = DispatchSource.makeTimerSource(flags: DispatchSource.TimerFlags(rawValue: UInt(0)), queue: self.privateSerialQueue) /*Migrator FIXME: Use DispatchSourceTimer to avoid the cast*/ as? DispatchSource
     }
     
     public convenience init(timespan:TimeSpan,block:@escaping ()->Void, repeats:Bool,dispatchQueue:DispatchQueue) {
@@ -44,10 +45,11 @@ open class GrandTimer: NSObject {
         self.timeSpan = timespan
         self.block = block
         self.repeats = repeats
-        let privateQueueName = "grandTime\(self)"
-        self.privateSerialQueue = DispatchQueue(label: privateQueueName.cString(using: String.Encoding.utf8)!, attributes: [])
-        self.privateSerialQueue?.setTarget(queue: dispatchQueue)
-        self.timer = DispatchSource.makeTimerSource(flags: DispatchSource.TimerFlags(rawValue: UInt(0)), queue: self.privateSerialQueue) /*Migrator FIXME: Use DispatchSourceTimer to avoid the cast*/ as! DispatchSource
+     //   let privateQueueName = "grandTime\(self)"
+     //   self.privateSerialQueue = DispatchQueue(label: privateQueueName, attributes: DispatchQueue.Attributes.concurrent)
+       // self.privateSerialQueue?.setTarget(queue: dispatchQueue)
+        self.privateSerialQueue = dispatchQueue
+        self.timer = DispatchSource.makeTimerSource(flags: DispatchSource.TimerFlags(rawValue: UInt(0)), queue: self.privateSerialQueue) /*Migrator FIXME: Use DispatchSourceTimer to avoid the cast*/ as? DispatchSource
     }
     
   open  static func scheduleTimerWithTimeSpan(_ timespan:TimeSpan,target:AnyObject,sel:Selector,userInfo:AnyObject?,repeats:Bool,dispatchQueue:DispatchQueue)->GrandTimer{
@@ -128,7 +130,8 @@ open class GrandTimer: NSObject {
             })
           
         }
-        self.target?.perform(self.selector!, with: self)
+    
+     let _ =    self.target?.perform(self.selector!, with: self)
         if !self.repeats {
             self.invalidate()
         }
@@ -153,9 +156,13 @@ open class GrandTimer: NSObject {
     }
     
     func resetTimerProperties()  {
-        let intervalInNanoseconds:Int64 = Int64(self.timeSpan!.ticks) * 1000000
-        let toleranceInNanoseconds:UInt64 = UInt64(self.tolerance!.ticks) * 1000000
-        self.timer!.setTimer(start: DispatchTime.now() + Double(intervalInNanoseconds) / Double(NSEC_PER_SEC), interval: UInt64(intervalInNanoseconds), leeway: toleranceInNanoseconds)
+       // let intervalInNanoseconds:Int64 = Int64(self.timeSpan!.ticks) * 1000000
+        let intervalInNanoseconds = DispatchTimeInterval.milliseconds(self.timeSpan!.ticks)
+        
+     //   let toleranceInNanoseconds:DispatchTimeInterval = UInt64(self.tolerance!.ticks) * 1000000
+      //  self.timer!.setTimer(start: DispatchTime.now() + Double(intervalInNanoseconds) / Double(NSEC_PER_SEC), interval: UInt64(intervalInNanoseconds), leeway: toleranceInNanoseconds)
+       // self.timer!.scheduleRepeating(deadline: DispatchTime.now() + Double(intervalInNanoseconds) / Double(NSEC_PER_SEC), interval: intervalInNanoseconds)
+        self.timer!.scheduleRepeating(deadline: DispatchTime.now() + intervalInNanoseconds, interval: intervalInNanoseconds)
     }
     
     override open var description: String{
