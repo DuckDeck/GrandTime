@@ -14,7 +14,25 @@ public enum  DateTimeKind:Int{
 }
 
 public enum DayOfWeek:Int{
-    case monday = 0,tuesday,wendesday,thursday,friday,saturday,sunday
+    case sunday = 0,monday,tuesday,wendesday,thursday,friday,saturday
+    public  var description:String{
+        switch self {
+        case .monday:
+            return "星期一"
+        case .tuesday:
+            return "星期二"
+        case .wendesday:
+            return "星期三"
+        case .thursday:
+            return "星期四"
+        case .friday:
+            return "星期五"
+        case .saturday:
+            return "星期六"
+        case .sunday:
+            return "星期天"
+        }
+    }
 }
 
 
@@ -83,7 +101,12 @@ open class DateTime: NSObject,Comparable {
     
     fileprivate  static var  dateComponent = DateComponents()
     
-    
+    static var timeZone = NSTimeZone.system{
+        didSet{
+            DateTime.dateFormatter.timeZone = timeZone
+        }
+    }
+    let offSetInterval = DateTime.timeZone.secondsFromGMT()
     
    fileprivate var dateTime:Date{
         // issue1 when in the init func .the disSet perocess do not work. this indeed not word. but it affect
@@ -97,6 +120,7 @@ open class DateTime: NSObject,Comparable {
     public  override init() {
         internalDateComponent = DateComponents()
         dateTime = Date()
+        DateTime.dateFormatter.timeZone = DateTime.timeZone
         super.init()
         internalDateComponent =  (Calendar.current as NSCalendar).components([.weekday,.weekOfYear,.year,.month,.day,.hour,.minute,.second,.nanosecond,.quarter,.weekOfMonth,.weekOfYear], from: dateTime)
     }
@@ -280,7 +304,7 @@ open class DateTime: NSObject,Comparable {
         get{
             let cal = Calendar.current
             let cmp = (cal as NSCalendar).component([.weekday], from: dateTime)
-            return DayOfWeek(rawValue: cmp)!
+            return DayOfWeek(rawValue: cmp - 1)!
         }
     }
     
@@ -397,7 +421,7 @@ open class DateTime: NSObject,Comparable {
     }
     
     open var weekDay:DayOfWeek{
-        return DayOfWeek(rawValue: internalDateComponent.weekday!)!
+        return DayOfWeek(rawValue: internalDateComponent.weekday! - 1)!
     }
     
     open var quarter:Int{
