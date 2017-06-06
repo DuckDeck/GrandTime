@@ -484,7 +484,7 @@ open class DateTime: NSObject,Comparable {
     
     // 这里目前不能传负数，但是如果是Int，类型，是应该可以接受负数的
     //这个地方有争议。很大有问题，不建议使用
-    open func addMonth(_ months:Int)  {
+    open func selfAddMonth(_ months:Int)  {
         var i = month
         var currentYear = year
         //可以将month转化成day
@@ -502,8 +502,7 @@ open class DateTime: NSObject,Comparable {
                 }
                 i = i + 1
             }
-            addDays(Double(days))
-
+            selfAddDays(Double(days))
         }
         
         if months < 0 {
@@ -520,38 +519,79 @@ open class DateTime: NSObject,Comparable {
                 }
                 i = i - 1
             }
-            addDays(Double(-days))
+            selfAddDays(Double(-days))
         }
     }
     
-    open func addYears(_ years:Int){
+    open func selfAddYears(_ years:Int){
         if year + years > 1000000 {
             print("DateTime warning: years is too big")
             return
         }
-        addMonth(years * 12) //这样应该要吧
+        selfAddMonth(years * 12) //这样应该要吧
     }
     
-    open func addDays(_ days:Double)  {
-        addMilliSeconds(days * Double(TickPerDay))
+    open func selfAddDays(_ days:Double)  {
+        selfAddMilliSeconds(days * Double(TickPerDay))
     }
     
-    open func addHours(_ hours:Double)  {
-         addMilliSeconds(hours * Double(TickPerHour))
+    open func selfAddHours(_ hours:Double)  {
+         selfAddMilliSeconds(hours * Double(TickPerHour))
     }
     
-    open func addMinutes(_ minutes:Double) {
-        addMilliSeconds(minutes * Double(TickPerMinute))
+    open func selfAddMinutes(_ minutes:Double) {
+        selfAddMilliSeconds(minutes * Double(TickPerMinute))
     }
     
-    open func addSeconds(_ seconds:Double)  {
-        addMilliSeconds(seconds * Double(TickPerSecond))
+    open func selfAddSeconds(_ seconds:Double)  {
+        selfAddMilliSeconds(seconds * Double(TickPerSecond))
     }
     
-    open func addMilliSeconds(_ milliSeconds:Double){
+    open func selfAddMilliSeconds(_ milliSeconds:Double){
         dateTime = dateTime.addingTimeInterval(milliSeconds / 1000)
     }
     
+    open func addMilliSeconds(_ milliSeconds:Double)->DateTime{
+        let copy = self.copy() as! DateTime
+        copy.selfAddMilliSeconds(milliSeconds)
+        return copy
+    }
+    
+    open func addSeconds(_ seconds:Double) ->DateTime {
+        let copy = self.copy() as! DateTime
+        copy.selfAddMilliSeconds(seconds * Double(TickPerSecond))
+        return copy
+    }
+    
+    open func addMinutes(_ minutes:Double)->DateTime {
+        let copy = self.copy() as! DateTime
+        copy.selfAddMilliSeconds(minutes * Double(TickPerMinute))
+        return copy
+    }
+    
+    open func addHours(_ hours:Double)  -> DateTime{
+        let copy = self.copy() as! DateTime
+        copy.selfAddMilliSeconds(hours * Double(TickPerHour))
+        return copy
+    }
+    
+    open func addDays(_ days:Double)  ->DateTime{
+         let copy = self.copy() as! DateTime
+        copy.selfAddMilliSeconds(days * Double(TickPerDay))
+        return copy
+    }
+    
+    open func addYears(_ years:Int)->DateTime{
+         let copy = self.copy() as! DateTime
+        copy.selfAddMonth(years * 12) //这样应该要吧
+        return copy
+    }
+    
+    open func addMonth(_ months:Int)  ->DateTime{
+         let copy = self.copy() as! DateTime
+        copy.selfAddMonth(months)
+        return copy
+    }
     
     
    open static func compare(_ left:DateTime,right:DateTime)->Int{
@@ -642,7 +682,13 @@ open class DateTime: NSObject,Comparable {
         }
     }
     
+    open override var hashValue: Int{
+        return ticks ^ hash
+    }
+    
     open override func copy() -> Any {
         return DateTime(date: dateTime)
     }
 }
+
+

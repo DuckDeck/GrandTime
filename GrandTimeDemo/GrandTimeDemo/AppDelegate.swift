@@ -27,13 +27,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let c = DateTime(date: Date(timeInterval: 3600, since: Date())) //使用NSDate初始化
         print(c)
         let e = DateTime(tick: 1000000) //使用Tick初始化  从1970年开始
-        print(e)
+        print(e!)
         let f = DateTime(tickSinceNow: 60000) //使用Tick初始化  从现在年开始
-        print(f)
+        print(f!)
         let g = DateTime(timestamp: 100000)//使用Stamp初始化
-        print(g)
+        print(g!)
         let h = DateTime(year: 2008, month: 2, day: 29) //使用年月日初始化
-        print(h)
+        print(h!)
         let i = DateTime(year: 2016, month: 12, day: 12, hour: 11, minute: 44, second: 12, millisecond: 111)!//使用年月日时分秒毫秒初始化
         print(i)
         
@@ -47,7 +47,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         //两个DateTime相减生成一个TimeSpan
         let span = c - a
         
-        print("a和c相差一小时\(span)")
+        print("a和c相差一小时\(String(describing: span))")
         
         print("a>c:\(a>c)")
         print("a<c:\(a<c)")
@@ -56,20 +56,30 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         
         
-        a.addYears(1)   //加一年
+        a.selfAddYears(1)   //加一年
         print("add Years:\(a)")
-        a.addMonth(1)   // 加 一个月
+        print(a.hashValue)
+        a.selfAddMonth(1)   // 加 一个月
         print("add addMonth:\(a)")
-        a.addDays(1)    // 加一天
+        print(a.hashValue)
+        a.selfAddDays(1)    // 加一天
         print("add addDays:\(a)")
-        a.addHours(1)   // 加一个小时
+        print(a.hashValue)
+        a.selfAddHours(1)   // 加一个小时
         print("add addHours:\(a)")
-        a.addMinutes(1) // 加一分钟
+        print(a.hashValue)
+        a.selfAddMinutes(1) // 加一分钟
         print("add addMinutes:\(a)")
-        a.addSeconds(1) // 加一秒
+        print(a.hashValue)
+        a.selfAddSeconds(1) // 加一秒
         print("add addSeconds:\(a)")
-
+        print(a.hashValue)
         
+        var dict = [DateTime:String]()
+        dict[a] = "123"
+        print(dict)
+        
+
         
         //下面获取部分
         print("获取i的各部分：year:\(i.year),   month:\(i.month),   day:\(i.day),   hour:\(i.hour),   minute:\(i.minute),   second:\(i.second),   minute:\(i.minute),   ticks:\(i.ticks),   ")
@@ -116,7 +126,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
          let o = TimeSpan()                                                                 //直接初始化
         print(o)
         let p = TimeSpan(days: 1, hours: 0, minutes: 11, seconds: 31)   //使用天，小时，分钟，秒来初始化
-        print(p)
+        print(p!)
         let q = TimeSpan(days: 20, hours: 11, minutes: 39, seconds: 21, milliseconds: 111)!   //使用天，小时，分钟，秒还有来初始化
         print(q)
         let r = TimeSpan(ticks: 9826127)   //使用tick来初始化

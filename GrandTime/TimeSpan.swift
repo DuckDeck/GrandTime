@@ -64,7 +64,7 @@ open class TimeSpan: NSObject,Comparable {
     
   public  convenience init(ticks:Int) {
         self.init()
-        assert(ticks > 0, "ticks must > 0")
+        assert(ticks >= 0, "ticks must >= 0")
         _ticks = ticks
         setTimes()
     }
@@ -227,26 +227,26 @@ open class TimeSpan: NSObject,Comparable {
     }
 
     open static func fromDays(_ days:Double)->TimeSpan{
-        assert(days > 0, "days must > 0")
+        assert(days >= 0, "days must >= 0")
         return TimeSpan(ticks: Int(days * Double(TickPerDay)))
     }
     
     open static func fromHours(_ hours:Double)->TimeSpan{
-        assert(hours > 0, "hours must > 0") //这里就不需要<24了
+        assert(hours >= 0, "hours must >= 0") //这里就不需要<24了
         return TimeSpan(ticks: Int(hours * Double(TickPerHour)))
     }
     
     open static func fromMinuts(_ minutes:Double)->TimeSpan{
-        assert(minutes > 0, "minutes must > 0")//这里就不需要<60了
+        assert(minutes >= 0, "minutes must >= 0")//这里就不需要<60了
         return TimeSpan(ticks: Int(minutes * Double(TickPerMinute)))
     }
     
     open static func fromSeconds(_ seconds:Double)->TimeSpan{
-        assert(seconds > 0, "minutes must > 0")//这里就不需要<60了
+        assert(seconds >= 0, "minutes must >= 0")//这里就不需要<60了
         return TimeSpan(ticks: Int(seconds * Double(TickPerSecond)))
     }
     open static func fromTicks(_ ticks:Int)->TimeSpan{
-        assert(ticks > 0, "minutes must > 0")//这里就不需要<60了
+        assert(ticks >= 0, "minutes must >= 0")//这里就不需要<60了
         return TimeSpan(ticks: ticks)
     }
     

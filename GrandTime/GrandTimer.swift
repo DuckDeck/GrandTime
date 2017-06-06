@@ -166,7 +166,7 @@ open class GrandTimer: NSObject {
     }
     
     override open var description: String{
-        return "timeSpan = \(timeSpan) target = \(target) selector = \(selector) userinfo = \(userInfo) repeats = \(repeats) timer= \(timer)"
+        return "timeSpan = \(String(describing: timeSpan)) target = \(String(describing: target)) selector = \(String(describing: selector)) userinfo = \(String(describing: userInfo)) repeats = \(repeats) timer= \(String(describing: timer))"
     }
     
     
