@@ -162,7 +162,7 @@ open class GrandTimer: NSObject {
      //   let toleranceInNanoseconds:DispatchTimeInterval = UInt64(self.tolerance!.ticks) * 1000000
       //  self.timer!.setTimer(start: DispatchTime.now() + Double(intervalInNanoseconds) / Double(NSEC_PER_SEC), interval: UInt64(intervalInNanoseconds), leeway: toleranceInNanoseconds)
        // self.timer!.scheduleRepeating(deadline: DispatchTime.now() + Double(intervalInNanoseconds) / Double(NSEC_PER_SEC), interval: intervalInNanoseconds)
-        self.timer!.scheduleRepeating(deadline: DispatchTime.now() + intervalInNanoseconds, interval: intervalInNanoseconds)
+        self.timer!.schedule(deadline: DispatchTime.now() + intervalInNanoseconds, repeating: intervalInNanoseconds)
     }
     
     override open var description: String{
