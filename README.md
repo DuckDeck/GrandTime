@@ -181,6 +181,5 @@ DateTime和TimeSpan的使用足够简单
 //如果pop出来，timer是可以自动回收内存的
 ```
 
-##Contact 
-Any issue or problem please contact me:3421902@qq.com, I will be happy fix it
+##  【联系我】
 【任何问题或者BUG请直接和我联系3421902@qq.com, 我会乐于帮你解决】
