@@ -626,6 +626,10 @@ open class DateTime: NSObject,Comparable {
         }
     }
     
+    open func isDaySame(dateTime:DateTime)->Bool{
+        return (self.year == dateTime.year) && (self.month == dateTime.month) && (self.day == dateTime.day)
+    }
+    
    open static func equals(_ left:DateTime,right:DateTime)->Bool{
         return DateTime.compare(left, right: right) == 0
     }
@@ -691,4 +695,8 @@ open class DateTime: NSObject,Comparable {
     }
 }
 
-
+extension Int{
+    func toDateTimeFormat(format:String = "yyyy-MM-dd HH:mm:ss")->String?{
+       return DateTime(tick: self)?.format(format)
+    }
+}
