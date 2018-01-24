@@ -17,6 +17,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         
+        
         print("----------------------------------下面是DateTime----------------------------------")
         
         
@@ -169,6 +170,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         print(s)
         s = s - r
         print(s)
+        
+        
+        
+        
         
         return true
         

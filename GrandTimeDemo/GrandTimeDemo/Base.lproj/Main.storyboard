@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11201" systemVersion="16A323" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="vIl-MQ-2dQ">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="vIl-MQ-2dQ">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11161"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -19,31 +22,57 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="RzE-gL-Sat">
-                                <frame key="frameInset" minX="210" minY="291" width="179" height="30"/>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="RzE-gL-Sat">
+                                <rect key="frame" x="16" y="72" width="119" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" red="1" green="0.13417768338891545" blue="0.9325110106996537" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="179" id="Ryz-vb-l1b"/>
-                                </constraints>
-                                <state key="normal" title="Next">
+                                <state key="normal" title="加一月">
                                     <color key="titleShadowColor" red="1" green="0.96589105239999995" blue="0.12538443769999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 </state>
                                 <connections>
-                                    <segue destination="ZhL-8i-0mj" kind="show" id="eo2-3r-ivM"/>
+                                    <action selector="addMonth:" destination="BYZ-38-t0r" eventType="touchUpInside" id="yAh-Iy-EmK"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="014-mp-j5m">
+                                <rect key="frame" x="224" y="72" width="119" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" red="1" green="0.1341776834" blue="0.93251101069999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <state key="normal" title="少一月">
+                                    <color key="titleShadowColor" red="1" green="0.96589105239999995" blue="0.12538443769999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                </state>
+                                <connections>
+                                    <action selector="decreaseMonth:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Owa-AX-sJS"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="2017-12" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uAb-I4-fkP">
+                                <rect key="frame" x="102" y="158" width="174" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mUI-zB-XfC">
+                                <rect key="frame" x="26" y="399" width="119" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" red="1" green="0.1341776834" blue="0.93251101069999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <state key="normal" title="下一页">
+                                    <color key="titleShadowColor" red="1" green="0.96589105239999995" blue="0.12538443769999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                </state>
+                                <connections>
+                                    <segue destination="ZhL-8i-0mj" kind="push" id="Fkd-wP-NLc"/>
                                 </connections>
                             </button>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                        <constraints>
-                            <constraint firstItem="RzE-gL-Sat" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="227" id="1MX-cj-w6f"/>
-                            <constraint firstItem="RzE-gL-Sat" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="NXd-Ky-eZd"/>
-                        </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="chk-Bb-ieN"/>
+                    <connections>
+                        <outlet property="lblMonth" destination="uAb-I4-fkP" id="xjc-pn-JOL"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1164" y="323"/>
+            <point key="canvasLocation" x="1164" y="322.48875562218893"/>
         </scene>
         <!--Timer View Controller-->
         <scene sceneID="jCk-yr-5f2">
@@ -58,7 +87,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KKu-lg-rhx">
-                                <frame key="frameInset" minX="54" minY="164" width="492" height="50"/>
+                                <rect key="frame" x="54" y="164" width="492" height="50"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="50" id="xbX-UG-rzO"/>
                                 </constraints>
@@ -67,7 +96,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="AoA-wP-uCZ">
-                                <frame key="frameInset" minX="74" minY="298" width="492" height="50"/>
+                                <rect key="frame" x="74" y="298" width="492" height="50"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="50" id="8AO-Ch-UHg"/>
                                 </constraints>
@@ -86,6 +115,7 @@
                             <constraint firstItem="KKu-lg-rhx" firstAttribute="top" secondItem="YnJ-h3-gMq" secondAttribute="bottom" constant="100" id="uws-Se-mpb"/>
                         </constraints>
                     </view>
+                    <navigationItem key="navigationItem" id="SCw-qR-x4o"/>
                     <connections>
                         <outlet property="lblTImerBlock" destination="AoA-wP-uCZ" id="HEi-h1-Na7"/>
                         <outlet property="lblTimer" destination="KKu-lg-rhx" id="mRi-aG-Fe7"/>
@@ -101,7 +131,7 @@
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="vIl-MQ-2dQ" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="wwS-hm-QWb">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <rect key="frame" x="0.0" y="20" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>

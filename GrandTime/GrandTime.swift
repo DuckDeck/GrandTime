@@ -492,10 +492,10 @@ open class DateTime: NSObject,Comparable {
         if months > 0 {
             while i < months + month{
                 if DateTime.isLeapYeay(currentYear) {
-                    days = days + LeapYearMonth[i % 12]
+                    days = days + LeapYearMonth[i - 1]
                 }
                 else{
-                    days = days + NotLeapYearMonth[i % 12]
+                    days = days + NotLeapYearMonth[i - 1]
                 }
                 if i % 12 == 0 {
                     currentYear = currentYear + 1
@@ -506,21 +506,30 @@ open class DateTime: NSObject,Comparable {
         }
         
         if months < 0 {
-                i = month - 1
-                while i >= months + month{
-                if DateTime.isLeapYeay(currentYear) {
-                    days = days + LeapYearMonth[abs(i) % 12]
+                i = getPreviousMonth(month: month)
+                var cul = 0
+                while cul < abs(months){
+                    if DateTime.isLeapYeay(currentYear) {
+                        days = days + LeapYearMonth[i - 1]
+                    }
+                    else{
+                        days = days + NotLeapYearMonth[i - 1]
+                    }
+                    if i % 12 == 0 {
+                        currentYear = currentYear - 1
+                    }
+                    i = getPreviousMonth(month: i)
+                    cul += 1
                 }
-                else{
-                    days = days + NotLeapYearMonth[abs(i) % 12]
-                }
-                if abs(i) % 12 == 0 {
-                    currentYear = currentYear - 1
-                }
-                i = i - 1
-            }
             selfAddDays(Double(-days))
         }
+    }
+    
+    func getPreviousMonth(month:Int) -> Int {
+        if month > 1{
+            return month - 1
+        }
+        return 12
     }
     
     open func selfAddYears(_ years:Int){
