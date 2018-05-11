@@ -12,6 +12,12 @@ let TickPerHour = 3600000
 let TickPerMinute = 60000
 let TickPerSecond = 1000
 
+public enum TimeSpanFormat{
+    case dayFormat, // "dd HH:mm:ss",
+     timeFormat, // "HH:mm:ss",
+     msecFormat // "HH:mm:ss SSS"
+}
+
 public func +(left:TimeSpan,right:TimeSpan) -> TimeSpan {
     let tick = left.ticks + right.ticks
     assert(tick < TimeSpan.Max!.ticks,"two timespan add can not big than max time span")
@@ -55,14 +61,14 @@ open class TimeSpan: NSObject,Comparable {
   fileprivate  var _day = 0
   fileprivate  var _hour = 0
   fileprivate  var _minute = 0
-   fileprivate var _second = 0
+  fileprivate var _second = 0
   fileprivate  var _millisecond = 0
   fileprivate  var _ticks = 0
   public  override init() {
         super.init()
     }
     
-  public  convenience init(ticks:Int) {
+   public  convenience init(ticks:Int) {
         self.init()
         assert(ticks >= 0, "ticks must >= 0")
         _ticks = ticks
@@ -254,15 +260,47 @@ open class TimeSpan: NSObject,Comparable {
     //这个地方不太好处理
     //这里可能要用正则，字符單解析一直是个大难题，这就是为什么编译器这么难写
     //C#里面有-的TimeSpan 我觉得没有必要
-    open static func parse(_ time:String)->TimeSpan?{
-        
-        return nil //时间不够，暂时不做
+    //这个还是要做一做的
+    // 默认和格式是 dd HH:mm:ss
+    //这时用个枚举就好了，只支持三种格式，选择太多其实并不好
+    open static func parse(_ time:String,format:TimeSpanFormat)->TimeSpan?{
+        let t = time.trimmingCharacters(in: .whitespaces)
+        switch format {
+        case .dayFormat:
+            if !regexTool.init("^\\d+\\s\\d{2}:\\d{2}:\\d{2}$").match(input: t){
+                print("you time \(time) did not comfirm the timespan format dd HH:mm:ss")
+                return nil
+            }
+            let day = Int(t.split(separator: " ").first!)!
+            let part2 = String(t.split(separator: " ").last!)
+            let hour = Int(part2.split(separator: ":")[0])!
+            let min = Int(part2.split(separator: ":")[1])!
+            let sec = Int(part2.split(separator: ":")[2])!
+            return TimeSpan(days: day, hours: hour, minutes: min, seconds: sec)
+        case .timeFormat:
+            if !regexTool.init("^\\d{2}:\\d{2}:\\d{2}$").match(input: t){
+                print("you time \(time) did not comfirm the timespan format HH:mm:ss")
+                return nil
+            }
+            let hour = Int(t.split(separator: ":")[0])!
+            let min = Int(t.split(separator: ":")[1])!
+            let sec = Int(t.split(separator: ":")[2])!
+            return TimeSpan(days: 0, hours: hour, minutes: min, seconds: sec)
+        case .msecFormat:
+            if !regexTool.init("^\\d{2}:\\d{2}:\\d{2}:\\d{3}$").match(input: t){
+                print("you time \(time) did not comfirm the timespan format HH:mm:ss:SSS")
+                return nil
+            }
+            let hour = Int(t.split(separator: ":")[0])!
+            let min = Int(t.split(separator: ":")[1])!
+            let sec = Int(t.split(separator: ":")[2])!
+            let msec = Int(t.split(separator: ":")[3])!
+            return TimeSpan(days: 0, hours: hour, minutes: min, seconds: sec, milliseconds: msec)
+      
+        }
     }
     
-    //借NSDateFormatter这个来用一用
-    open static func parse(_ time:String,format:DateFormatter)->Timer?{
-        return nil //时间不够，暂时不做
-    }
+ 
     
     open func add(_ time:TimeSpan)->TimeSpan{
         let tick = time.ticks + ticks
@@ -322,3 +360,19 @@ open class TimeSpan: NSObject,Comparable {
         }
     }
 }
+
+struct regexTool {
+    let regex:NSRegularExpression?
+    init(_ pattern:String){
+        regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive)
+    }
+    func match(input:String)->Bool{
+        if let matches = regex?.matches(in: input, options: NSRegularExpression.MatchingOptions.withoutAnchoringBounds, range: NSMakeRange(0, (input as NSString).length)) {
+            return matches.count > 0
+        }
+        else{
+            return false
+        }
+    }
+}
+

@@ -172,9 +172,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         print(s)
         
         
-        
-        
-        
+        let timespan1 = TimeSpan.parse("5 11:11:11", format: .dayFormat)
+        let timespan2 = TimeSpan.parse("45:11:11", format: .timeFormat)
+        let timespan3 = TimeSpan.parse("11:11:11:003", format: .msecFormat)
+        print(timespan1)
+        print(timespan2)
+        print(timespan3)
         return true
         
         

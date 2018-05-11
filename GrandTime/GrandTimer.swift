@@ -22,43 +22,39 @@ open class GrandTimer: NSObject {
     var privateSerialQueue:DispatchQueue?
     var timer:DispatchSource?
     var block:(()->Void)?
-   fileprivate override init() {
+    var isNeedCount = false
+    
+    fileprivate override init() {
         super.init()
     }
     
-   public convenience init(timespan:TimeSpan,target:AnyObject,sel:Selector,userInfo:AnyObject?,repeats:Bool,dispatchQueue:DispatchQueue){
+   private convenience init(timespan:TimeSpan,target:AnyObject,sel:Selector,userInfo:AnyObject?,repeats:Bool,dispatchQueue:DispatchQueue){
         self.init()
         self.timeSpan = timespan
         self.target = target
         self.selector = sel
         self.userInfo = userInfo
         self.repeats = repeats
-//        let privateQueueName = "grandTime\(self)"
-//        self.privateSerialQueue = DispatchQueue(label: privateQueueName, attributes: [])
-//        self.privateSerialQueue?.setTarget(queue: dispatchQueue)
         self.privateSerialQueue = dispatchQueue
-        self.timer = DispatchSource.makeTimerSource(flags: DispatchSource.TimerFlags(rawValue: UInt(0)), queue: self.privateSerialQueue) /*Migrator FIXME: Use DispatchSourceTimer to avoid the cast*/ as? DispatchSource
+        self.timer = DispatchSource.makeTimerSource(flags: DispatchSource.TimerFlags(rawValue: UInt(0)), queue: self.privateSerialQueue) as? DispatchSource
     }
     
-    public convenience init(timespan:TimeSpan,block:@escaping ()->Void, repeats:Bool,dispatchQueue:DispatchQueue) {
+   private convenience init(timespan:TimeSpan,block:@escaping ()->Void, repeats:Bool,dispatchQueue:DispatchQueue) {
          self.init()
         self.timeSpan = timespan
         self.block = block
         self.repeats = repeats
-     //   let privateQueueName = "grandTime\(self)"
-     //   self.privateSerialQueue = DispatchQueue(label: privateQueueName, attributes: DispatchQueue.Attributes.concurrent)
-       // self.privateSerialQueue?.setTarget(queue: dispatchQueue)
         self.privateSerialQueue = dispatchQueue
-        self.timer = DispatchSource.makeTimerSource(flags: DispatchSource.TimerFlags(rawValue: UInt(0)), queue: self.privateSerialQueue) /*Migrator FIXME: Use DispatchSourceTimer to avoid the cast*/ as? DispatchSource
+        self.timer = DispatchSource.makeTimerSource(flags: DispatchSource.TimerFlags(rawValue: UInt(0)), queue: self.privateSerialQueue)  as? DispatchSource
     }
     
-  open  static func scheduleTimerWithTimeSpan(_ timespan:TimeSpan,target:AnyObject,sel:Selector,userInfo:AnyObject?,repeats:Bool,dispatchQueue:DispatchQueue)->GrandTimer{
+   open static func scheduleTimerWithTimeSpan(_ timespan:TimeSpan,target:AnyObject,sel:Selector,userInfo:AnyObject?,repeats:Bool,dispatchQueue:DispatchQueue)->GrandTimer{
         let timer = GrandTimer(timespan: timespan, target: target, sel: sel, userInfo: userInfo, repeats: repeats, dispatchQueue: dispatchQueue)
         timer.schedule()
         return timer
     }
     
-    open  static func scheduleTimerWithTimeSpan(_ timespan:TimeSpan,block:@escaping ()->Void,repeats:Bool,dispatchQueue:DispatchQueue)->GrandTimer{
+   open  static func scheduleTimerWithTimeSpan(_ timespan:TimeSpan,block:@escaping ()->Void,repeats:Bool,dispatchQueue:DispatchQueue)->GrandTimer{
         let timer = GrandTimer(timespan: timespan, block: block, repeats: repeats, dispatchQueue: dispatchQueue)
         timer.schedule()
         return timer
@@ -68,8 +64,6 @@ open class GrandTimer: NSObject {
         let privateQueueName = "grandTimeAfter\(arc4random())"
         let dispatch = DispatchQueue(label: privateQueueName, attributes: DispatchQueue.Attributes.concurrent)
         let timer = GrandTimer.scheduleTimerWithTimeSpan(timeSpan, block: block, repeats: false, dispatchQueue: dispatch)
-
-        
         return timer
     }
     
@@ -80,36 +74,23 @@ open class GrandTimer: NSObject {
         return timer
     }
     
-    // issue0 ,as for selector in a static func, the selector must be a static selector, so this is the problem, need to fix it
-    // It looks like the anly way to fix it is to save the block in a dict..
-    // select a key to store is a big issue, I can not find a desend key for this ,because the static func can not
-    // bad this func can not call periodical. So think this is not gonna to work, I must find a another way to handle this.
-    // So I must add a original func to init the timer
-   // static func tick()  {
-//        if let bok = block{
-//            bok()
-//        }
-        
-     //   print("11")
- //   }
-    
   open  func schedule() {
         resetTimerProperties()
         weak var weakSelf = self
         self.timer!.setEventHandler { 
             weakSelf?.timerFired()
         }
-        self.timer!.resume()
+        timer?.resume()
     }
     
     deinit{
         invalidate()
     }
     
-  open  func fire() {
-        timerFired()
+    open func fire() {
+        isNeedCount = true
     }
-    
+
   open  func invalidate() {
         if !OSAtomicTestAndSetBarrier(7, &timerFlags.timerIsInvalid) {
             if  let timer = self.timer{
@@ -120,18 +101,25 @@ open class GrandTimer: NSObject {
         }
     }
     
-  open  func timerFired() {
+    open func pause() {
+        isNeedCount = false
+    }
+
+    
+   open func timerFired() {
+        if !isNeedCount{
+            return
+        }
         if OSAtomicAnd32OrigBarrier(1, &timerFlags.timerIsInvalid) < 0{
             return
         }
         if let blk = block{
             DispatchQueue.main.async(execute: { 
-                  blk()
+                 blk()
             })
-          
         }
     
-     let _ =    self.target?.perform(self.selector!, with: self)
+        let _ =    self.target?.perform(self.selector!, with: self)
         if !self.repeats {
             self.invalidate()
         }
@@ -149,19 +137,15 @@ open class GrandTimer: NSObject {
 
         }
         get{
-//            objc_sync_enter(self)
-            return _tolerance
-//            objc_sync_exit(self)
+            objc_sync_enter(self)
+            let t =  _tolerance
+            objc_sync_exit(self)
+            return t
         }
     }
     
     func resetTimerProperties()  {
-       // let intervalInNanoseconds:Int64 = Int64(self.timeSpan!.ticks) * 1000000
         let intervalInNanoseconds = DispatchTimeInterval.milliseconds(self.timeSpan!.ticks)
-        
-     //   let toleranceInNanoseconds:DispatchTimeInterval = UInt64(self.tolerance!.ticks) * 1000000
-      //  self.timer!.setTimer(start: DispatchTime.now() + Double(intervalInNanoseconds) / Double(NSEC_PER_SEC), interval: UInt64(intervalInNanoseconds), leeway: toleranceInNanoseconds)
-       // self.timer!.scheduleRepeating(deadline: DispatchTime.now() + Double(intervalInNanoseconds) / Double(NSEC_PER_SEC), interval: intervalInNanoseconds)
         self.timer!.schedule(deadline: DispatchTime.now() + intervalInNanoseconds, repeating: intervalInNanoseconds)
     }
     

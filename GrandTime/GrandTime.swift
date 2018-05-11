@@ -108,7 +108,7 @@ open class DateTime: NSObject,Comparable {
     }
     let offSetInterval = DateTime.timeZone.secondsFromGMT()
     
-   fileprivate var dateTime:Date{
+    fileprivate var dateTime:Date{
         // issue1 when in the init func .the disSet perocess do not work. this indeed not word. but it affect
         didSet{
             internalDateComponent =  (Calendar.current as NSCalendar).components([.weekday,.weekOfYear,.year,.month,.day,.hour,.minute,.second,.nanosecond,.quarter,.weekOfMonth,.weekOfYear], from: dateTime)
@@ -492,10 +492,10 @@ open class DateTime: NSObject,Comparable {
         if months > 0 {
             while i < months + month{
                 if DateTime.isLeapYeay(currentYear) {
-                    days = days + LeapYearMonth[i - 1]
+                    days = days + LeapYearMonth[i % 12]
                 }
                 else{
-                    days = days + NotLeapYearMonth[i - 1]
+                    days = days + NotLeapYearMonth[i % 12]
                 }
                 if i % 12 == 0 {
                     currentYear = currentYear + 1
@@ -506,30 +506,21 @@ open class DateTime: NSObject,Comparable {
         }
         
         if months < 0 {
-                i = getPreviousMonth(month: month)
-                var cul = 0
-                while cul < abs(months){
-                    if DateTime.isLeapYeay(currentYear) {
-                        days = days + LeapYearMonth[i - 1]
-                    }
-                    else{
-                        days = days + NotLeapYearMonth[i - 1]
-                    }
-                    if i % 12 == 0 {
-                        currentYear = currentYear - 1
-                    }
-                    i = getPreviousMonth(month: i)
-                    cul += 1
+            i = month - 1
+            while i >= months + month{
+                if DateTime.isLeapYeay(currentYear) {
+                    days = days + LeapYearMonth[abs(i) % 12]
                 }
+                else{
+                    days = days + NotLeapYearMonth[abs(i) % 12]
+                }
+                if abs(i) % 12 == 0 {
+                    currentYear = currentYear - 1
+                }
+                i = i - 1
+            }
             selfAddDays(Double(-days))
         }
-    }
-    
-    func getPreviousMonth(month:Int) -> Int {
-        if month > 1{
-            return month - 1
-        }
-        return 12
     }
     
     open func selfAddYears(_ years:Int){
@@ -545,7 +536,7 @@ open class DateTime: NSObject,Comparable {
     }
     
     open func selfAddHours(_ hours:Double)  {
-         selfAddMilliSeconds(hours * Double(TickPerHour))
+        selfAddMilliSeconds(hours * Double(TickPerHour))
     }
     
     open func selfAddMinutes(_ minutes:Double) {
@@ -585,25 +576,25 @@ open class DateTime: NSObject,Comparable {
     }
     
     open func addDays(_ days:Double)  ->DateTime{
-         let copy = self.copy() as! DateTime
+        let copy = self.copy() as! DateTime
         copy.selfAddMilliSeconds(days * Double(TickPerDay))
         return copy
     }
     
     open func addYears(_ years:Int)->DateTime{
-         let copy = self.copy() as! DateTime
+        let copy = self.copy() as! DateTime
         copy.selfAddMonth(years * 12) //这样应该要吧
         return copy
     }
     
     open func addMonth(_ months:Int)  ->DateTime{
-         let copy = self.copy() as! DateTime
+        let copy = self.copy() as! DateTime
         copy.selfAddMonth(months)
         return copy
     }
     
     
-   open static func compare(_ left:DateTime,right:DateTime)->Int{
+    open static func compare(_ left:DateTime,right:DateTime)->Int{
         let result = left.dateTime.compare(right.dateTime)
         if result == .orderedAscending {
             return -1
@@ -614,12 +605,12 @@ open class DateTime: NSObject,Comparable {
         return 0
     }
     
-  open  func compareTo(_ time:DateTime) -> Int {
+    open  func compareTo(_ time:DateTime) -> Int {
         return DateTime.compare(self, right: time)
     }
     
- open   func daysInMonth(_ year:Int,month:Int) -> Int? {
-         if month < 1 {
+    open   func daysInMonth(_ year:Int,month:Int) -> Int? {
+        if month < 1 {
             print("DateTime warning: month can not less than 1")
             return nil
         }
@@ -635,21 +626,17 @@ open class DateTime: NSObject,Comparable {
         }
     }
     
-    open func isDaySame(dateTime:DateTime)->Bool{
-        return (self.year == dateTime.year) && (self.month == dateTime.month) && (self.day == dateTime.day)
-    }
-    
-   open static func equals(_ left:DateTime,right:DateTime)->Bool{
+    open static func equals(_ left:DateTime,right:DateTime)->Bool{
         return DateTime.compare(left, right: right) == 0
     }
     
-  open  func  equals(_ time:DateTime) -> Bool {
+    open  func  equals(_ time:DateTime) -> Bool {
         return DateTime.equals(self, right: time)
     }
     
     //最好用一个单例子来实现NSDateFormatter，因为NSDateFormatter
     //很吃资源
-  open  func format(_ format:String = "yyyy-MM-dd HH:mm:ss:SSS") -> String {
+    open  func format(_ format:String = "yyyy-MM-dd HH:mm:ss:SSS") -> String {
         DateTime.dateFormatter.dateFormat = format
         return DateTime.dateFormatter.string(from: dateTime)
     }
@@ -661,13 +648,13 @@ open class DateTime: NSObject,Comparable {
         return DateTime.dateFormatter.string(from: dateTime)
     }
     
-
     
-  open  var dateString:String{
+    
+    open  var dateString:String{
         return format("yyyy-MM-dd")
     }
     
-  open   var timeString:String{
+    open   var timeString:String{
         return format("HH:mm:ss")
     }
     
@@ -675,7 +662,7 @@ open class DateTime: NSObject,Comparable {
     //这里还需要各种转化为时间的Style，需要补上
     
     
-   open static func parse(_ time:String) -> DateTime? {
+    open static func parse(_ time:String) -> DateTime? {
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
         if let date = dateFormatter.date(from: time){
             return DateTime(date: date)
@@ -685,7 +672,7 @@ open class DateTime: NSObject,Comparable {
         }
     }
     
-  open  static func parse(_ time:String,format:String) -> DateTime? {
+    open  static func parse(_ time:String,format:String) -> DateTime? {
         dateFormatter.dateFormat = format
         if let date = dateFormatter.date(from: time){
             return DateTime(date: date)
@@ -701,11 +688,5 @@ open class DateTime: NSObject,Comparable {
     
     open override func copy() -> Any {
         return DateTime(date: dateTime)
-    }
-}
-
-extension Int{
-    func toDateTimeFormat(format:String = "yyyy-MM-dd HH:mm:ss")->String?{
-       return DateTime(tick: self)?.format(format)
     }
 }

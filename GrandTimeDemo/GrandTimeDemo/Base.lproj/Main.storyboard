@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="vIl-MQ-2dQ">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="vIl-MQ-2dQ">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -86,33 +86,42 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KKu-lg-rhx">
-                                <rect key="frame" x="54" y="164" width="492" height="50"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KKu-lg-rhx">
+                                <rect key="frame" x="45" y="105" width="284" height="50"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="50" id="xbX-UG-rzO"/>
+                                    <constraint firstAttribute="height" constant="50" id="gR1-l1-8pI"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="AoA-wP-uCZ">
-                                <rect key="frame" x="74" y="298" width="492" height="50"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="AoA-wP-uCZ">
+                                <rect key="frame" x="26" y="296" width="323" height="52"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="50" id="8AO-Ch-UHg"/>
+                                    <constraint firstAttribute="height" constant="52" id="9fM-xe-y8L"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WKb-N5-LV8">
+                                <rect key="frame" x="34" y="534" width="31" height="30"/>
+                                <state key="normal" title="暂停"/>
+                                <connections>
+                                    <action selector="pauseTimer:" destination="ZhL-8i-0mj" eventType="touchUpInside" id="W4S-Mg-3QR"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstAttribute="trailingMargin" secondItem="KKu-lg-rhx" secondAttribute="trailing" constant="34" id="0Ax-iL-q1y"/>
-                            <constraint firstItem="KKu-lg-rhx" firstAttribute="leading" secondItem="oDp-eP-B3q" secondAttribute="leadingMargin" constant="34" id="1cP-4Z-V8u"/>
-                            <constraint firstItem="AoA-wP-uCZ" firstAttribute="leading" secondItem="oDp-eP-B3q" secondAttribute="leadingMargin" constant="54" id="3Vd-RQ-Ngc"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="AoA-wP-uCZ" secondAttribute="trailing" constant="14" id="FRT-nL-1Id"/>
-                            <constraint firstItem="AoA-wP-uCZ" firstAttribute="top" secondItem="KKu-lg-rhx" secondAttribute="bottom" constant="84" id="VpG-bP-2th"/>
-                            <constraint firstItem="KKu-lg-rhx" firstAttribute="top" secondItem="YnJ-h3-gMq" secondAttribute="bottom" constant="100" id="uws-Se-mpb"/>
+                            <constraint firstItem="WKb-N5-LV8" firstAttribute="leading" secondItem="oDp-eP-B3q" secondAttribute="leadingMargin" constant="18" id="FsE-QC-MIQ"/>
+                            <constraint firstItem="KKu-lg-rhx" firstAttribute="centerX" secondItem="AoA-wP-uCZ" secondAttribute="centerX" id="JFd-ew-lSS"/>
+                            <constraint firstItem="NgD-LS-m2a" firstAttribute="top" secondItem="WKb-N5-LV8" secondAttribute="bottom" constant="103" id="cqY-4Y-8Lc"/>
+                            <constraint firstItem="NgD-LS-m2a" firstAttribute="top" secondItem="AoA-wP-uCZ" secondAttribute="bottom" constant="319" id="gpU-oU-QAX"/>
+                            <constraint firstItem="KKu-lg-rhx" firstAttribute="centerX" secondItem="oDp-eP-B3q" secondAttribute="centerX" id="je0-do-bZB"/>
+                            <constraint firstItem="AoA-wP-uCZ" firstAttribute="leading" secondItem="oDp-eP-B3q" secondAttribute="leadingMargin" constant="10" id="rlC-8z-98H"/>
+                            <constraint firstItem="KKu-lg-rhx" firstAttribute="leading" secondItem="oDp-eP-B3q" secondAttribute="leadingMargin" constant="29" id="tTU-fS-EaI"/>
+                            <constraint firstItem="KKu-lg-rhx" firstAttribute="top" secondItem="YnJ-h3-gMq" secondAttribute="bottom" constant="41" id="uW8-3Q-2BV"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="SCw-qR-x4o"/>
@@ -123,7 +132,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="nxp-09-PyD" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1820" y="318"/>
+            <point key="canvasLocation" x="1819.5" y="317.5"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="xab-zO-x0C">

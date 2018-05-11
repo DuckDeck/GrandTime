@@ -13,8 +13,10 @@ class TimerViewController: UIViewController {
     @IBOutlet weak var lblTImerBlock: UILabel!
     @IBOutlet weak var lblTimer: UILabel!
     var timer:GrandTimer?
+    var timer2:GrandTimer?
     var seco = 0
     var seco2 = 0
+    var isPause = false
     override func viewDidLoad() {
         super.viewDidLoad()
      //   let dispatch = dispatch_queue_create("test", DISPATCH_QUEUE_CONCURRENT)
@@ -39,14 +41,17 @@ class TimerViewController: UIViewController {
         weak var weakSelf = self
         //使用者要注意，这个timer本身是waak的，所以需要一个外部变量来强引用，
         //如果要让timer正确地释放内存，那么要使用weakself
-      timer =  GrandTimer.every(TimeSpan.fromSeconds(1)) {
+       timer = GrandTimer.every(TimeSpan.fromSeconds(1)) {
             weakSelf!.seco2 = weakSelf!.seco2 + 1
             weakSelf!.lblTimer.text = "\(weakSelf!.seco2)"
         }
-        
-        timer?.invalidate()
+        lblTImerBlock.text = "3秒后变红"
+        timer?.fire()
  
-
+        timer2 = GrandTimer.after(TimeSpan.fromSeconds(3), block: {
+            weakSelf?.lblTImerBlock.backgroundColor = UIColor.red
+        })
+        timer2?.fire()
         
         // Do any additional setup after loading the view.
     }
@@ -58,6 +63,16 @@ class TimerViewController: UIViewController {
         }
     }
 
+   
+    @IBAction func pauseTimer(_ sender: UIButton) {
+        isPause = !isPause
+        if isPause{
+            timer?.pause()
+        }
+        else{
+            timer?.fire()
+        }
+    }
     deinit{
         print("\(type(of: self))) the view deinit which means the timer release in the viewcontrollre")
     }
