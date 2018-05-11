@@ -15,7 +15,8 @@ let TickPerSecond = 1000
 public enum TimeSpanFormat{
     case dayFormat, // "dd HH:mm:ss",
      timeFormat, // "HH:mm:ss",
-     msecFormat // "HH:mm:ss SSS"
+     msecFormat, // "HH:mm:ss SSS"
+     allFormat // "dd HH:mm:ss SSS"
 }
 
 public func +(left:TimeSpan,right:TimeSpan) -> TimeSpan {
@@ -272,10 +273,10 @@ open class TimeSpan: NSObject,Comparable {
                 return nil
             }
             let day = Int(t.split(separator: " ").first!)!
-            let part2 = String(t.split(separator: " ").last!)
-            let hour = Int(part2.split(separator: ":")[0])!
-            let min = Int(part2.split(separator: ":")[1])!
-            let sec = Int(part2.split(separator: ":")[2])!
+            let time = String(t.split(separator: " ").last!)
+            let hour = Int(time.split(separator: ":")[0])!
+            let min = Int(time.split(separator: ":")[1])!
+            let sec = Int(time.split(separator: ":")[2])!
             return TimeSpan(days: day, hours: hour, minutes: min, seconds: sec)
         case .timeFormat:
             if !regexTool.init("^\\d{2}:\\d{2}:\\d{2}$").match(input: t){
@@ -296,7 +297,18 @@ open class TimeSpan: NSObject,Comparable {
             let sec = Int(t.split(separator: ":")[2])!
             let msec = Int(t.split(separator: ":")[3])!
             return TimeSpan(days: 0, hours: hour, minutes: min, seconds: sec, milliseconds: msec)
-      
+        case .allFormat:
+            if !regexTool.init("^\\d+\\s\\d{2}:\\d{2}:\\d{2}:\\d{3}$").match(input: t){
+                print("you time \(time) did not comfirm the timespan format dd HH:mm:ss:SSS")
+                return nil
+            }
+            let day = Int(t.split(separator: " ").first!)!
+            let time = String(t.split(separator: " ").last!)
+            let hour = Int(time.split(separator: ":")[0])!
+            let min = Int(time.split(separator: ":")[1])!
+            let sec = Int(time.split(separator: ":")[2])!
+            let msec = Int(time.split(separator: ":")[3])!
+            return TimeSpan(days: day, hours: hour, minutes: min, seconds: sec, milliseconds: msec)
         }
     }
     
@@ -348,7 +360,29 @@ open class TimeSpan: NSObject,Comparable {
     }
     
   
-  
+   //这里有前面补0的问题，其实可以用格式的大小写来解决
+    func format(format:String = "dd HH:mm:ss") -> String {
+        let minute = String(format: "%02d", minutes)
+        let second = String(format: "%02d", seconds)
+        let millisecond = String(format: "%03d", milliseconds)
+        var result = format
+        if format.contains("dd"){
+            result = result.replacingOccurrences(of: "dd", with: String(days))
+        }
+        if format.contains("HH") {
+            result = result.replacingOccurrences(of: "HH", with: String(format: "%02d", hours))
+        }
+        if format.contains("mm") {
+            result = result.replacingOccurrences(of: "mm", with: String(minute))
+        }
+        if format.contains("ss") {
+            result = result.replacingOccurrences(of: "ss", with: String(second))
+        }
+        if format.contains("SSS") {
+            result = result.replacingOccurrences(of: "SSS", with: String(millisecond))
+        }
+        return result
+    }
     
     fileprivate func setTimes(){
         if _ticks > 0 {

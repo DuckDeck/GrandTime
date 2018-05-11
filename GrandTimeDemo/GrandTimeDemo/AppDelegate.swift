@@ -175,10 +175,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let timespan1 = TimeSpan.parse("5 11:11:11", format: .dayFormat)
         let timespan2 = TimeSpan.parse("45:11:11", format: .timeFormat)
         let timespan3 = TimeSpan.parse("11:11:11:003", format: .msecFormat)
+        let timespan4 = TimeSpan.parse("12 22:59:11:003", format: .allFormat)
         print(timespan1)
         print(timespan2)
         print(timespan3)
+        print(timespan4)
+        print(timespan4?.format(format: "dd天HH时mm分ss秒SSS虚秒"))
         return true
+        
         
         
     }
