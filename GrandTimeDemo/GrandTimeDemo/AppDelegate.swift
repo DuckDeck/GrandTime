@@ -181,6 +181,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         print(timespan3)
         print(timespan4)
         print(timespan4?.format(format: "dd天HH时mm分ss秒SSS虚秒"))
+        
+        print(DateTime.now.time)
+        
+        
+        
+        
+        
+        
         return true
         
         
