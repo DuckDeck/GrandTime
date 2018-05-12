@@ -658,8 +658,8 @@ open class DateTime: NSObject,Comparable {
         return format("HH:mm:ss")
     }
     
-    open var time:TimeSpan{
-        return TimeSpan(hours: hour, minutes: minute, seconds: second)!
+    open var time:DateTime{
+        return DateTime(year: 0, month: 0, day: 0, hour: hour, minute: minute, second: second)!
     }
     
     //这里还需要各种转化为时间的Style，需要补上
