@@ -346,12 +346,12 @@ open class TimeSpan: NSObject,Comparable {
 
     open  override var description: String{
         get{
-            //let hour = String(format: "%02d", hours)
+            let hour = String(format: "%02d", hours)
             let minute = String(format: "%02d", minutes)
             let second = String(format: "%02d", seconds)
             let millisecond = String(format: "%03d", milliseconds)
             if days > 0{
-                return "\(days) \(hours):\(minute):\(second):\(millisecond)"
+                return "\(days) \(hour):\(minute):\(second):\(millisecond)"
             }
             else {
                 return "\(hours):\(minute):\(second):\(millisecond)"

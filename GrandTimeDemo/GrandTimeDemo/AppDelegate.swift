@@ -27,10 +27,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         print(a)
         let c = DateTime(date: Date(timeInterval: 3600, since: Date())) //使用NSDate初始化
         print(c)
-        let e = DateTime(tick: 1000000) //使用Tick初始化  从1970年开始
+        let e = DateTime(ticks: 1000000) //使用Tick初始化
         print(e!)
-        let f = DateTime(tickSinceNow: 60000) //使用Tick初始化  从现在年开始
-        print(f!)
         let g = DateTime(timestamp: 100000)//使用Stamp初始化
         print(g!)
         let h = DateTime(year: 2008, month: 2, day: 29) //使用年月日初始化
@@ -182,8 +180,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         print(timespan4)
         print(timespan4?.format(format: "dd天HH时mm分ss秒SSS虚秒"))
         
-        print(DateTime.now.time)
         
+        let last = DateTime.now - TimeSpan.fromDays(36500)
+        //目录最少只能表示1970年，这样不合理
+        print(last)
+        let sss = Date(timeIntervalSince1970: -62167219200)
+        print(sss)
+        print(sss.timeIntervalSince1970)
+        print(DateTime.now.toOCDate())
         
         
         
