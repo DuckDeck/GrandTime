@@ -46,7 +46,7 @@ enum DisplayDateTimeStyleLanguage {
 
 public let LeapYearMonth = [31,29,31,30,31,30,31,31,30,31,30,31]
 public let NotLeapYearMonth  = [31,28,31,30,31,30,31,31,30,31,30,31]
-public let TickTo1970 = -62167219200 //这个时间戳是 0000-01-01 00:00:00的时间戳
+//public let TicksTo1970 = -62167219200 //这个时间戳是 0000-01-01 00:00:00的时间戳
 //这个会有点难，要算的东西有点多
 public func -(left:DateTime,right:DateTime) -> TimeSpan? {
     let ms = left.dateTime.timeIntervalSince(right.dateTime)
@@ -140,7 +140,7 @@ open class DateTime: NSObject,Comparable {
             print("DateTime warning: tick can not bigger than Int.max / 100000")
             return nil
         }
-        dateTime = Date(timeIntervalSince1970: TimeInterval(Int(ticks / 1000) + TickTo1970))
+        dateTime = Date(timeIntervalSince1970: TimeInterval(Int(ticks / 1000) - 62167219200))
         internalDateComponent =  (Calendar.current as NSCalendar).components([.weekday,.weekOfYear,.year,.month,.day,.hour,.minute,.second,.nanosecond,.quarter,.weekOfMonth,.weekOfYear], from: dateTime)
         
     }
@@ -161,7 +161,7 @@ open class DateTime: NSObject,Comparable {
     
     public convenience init?(timestamp:Int){
         self.init()
-        if timestamp < TickTo1970 {
+        if timestamp < -62167219200 {
             print("DateTime warning: timestamp can not less than -62167219200")
             return nil
         }
@@ -439,7 +439,7 @@ open class DateTime: NSObject,Comparable {
     }
     
     open var ticks:Int{
-        return (Int(dateTime.timeIntervalSince1970) - TickTo1970) * 1000
+        return (Int(dateTime.timeIntervalSince1970) + 62167219200) * 1000
     }
     
     var timestamp:Int{
@@ -486,11 +486,11 @@ open class DateTime: NSObject,Comparable {
     
     open static func ticksToTimestamp(ticks:Int)->Int{
         assert(ticks >= 0,"ticks must bigger than 0")
-        return Int(ticks / 1000 + TickTo1970)
+        return Int(ticks / 1000 - 62167219200)
     }
     
     open static func timestampToTicks(timestamp:Int)->Int{
-        return (timestamp - TickTo1970) * 1000
+        return (timestamp + 62167219200) * 1000
     }
     
     open static func isLeapYeay(_ year:Int)->Bool{
