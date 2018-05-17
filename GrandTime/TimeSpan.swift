@@ -268,7 +268,7 @@ open class TimeSpan: NSObject,Comparable {
         let t = time.trimmingCharacters(in: .whitespaces)
         switch format {
         case .dayFormat:
-            if !regexTool.init("^\\d+\\s\\d{2}:\\d{2}:\\d{2}$").match(input: t){
+            if !DateTime.RegexTool.init("^\\d+\\s\\d{2}:\\d{2}:\\d{2}$").match(input: t){
                 print("you time \(time) did not comfirm the timespan format dd HH:mm:ss")
                 return nil
             }
@@ -279,7 +279,7 @@ open class TimeSpan: NSObject,Comparable {
             let sec = Int(time.split(separator: ":")[2])!
             return TimeSpan(days: day, hours: hour, minutes: min, seconds: sec)
         case .timeFormat:
-            if !regexTool.init("^\\d{2}:\\d{2}:\\d{2}$").match(input: t){
+            if !DateTime.RegexTool.init("^\\d{2}:\\d{2}:\\d{2}$").match(input: t){
                 print("you time \(time) did not comfirm the timespan format HH:mm:ss")
                 return nil
             }
@@ -288,7 +288,7 @@ open class TimeSpan: NSObject,Comparable {
             let sec = Int(t.split(separator: ":")[2])!
             return TimeSpan(days: 0, hours: hour, minutes: min, seconds: sec)
         case .msecFormat:
-            if !regexTool.init("^\\d{2}:\\d{2}:\\d{2}:\\d{3}$").match(input: t){
+            if !DateTime.RegexTool.init("^\\d{2}:\\d{2}:\\d{2}:\\d{3}$").match(input: t){
                 print("you time \(time) did not comfirm the timespan format HH:mm:ss:SSS")
                 return nil
             }
@@ -298,7 +298,7 @@ open class TimeSpan: NSObject,Comparable {
             let msec = Int(t.split(separator: ":")[3])!
             return TimeSpan(days: 0, hours: hour, minutes: min, seconds: sec, milliseconds: msec)
         case .allFormat:
-            if !regexTool.init("^\\d+\\s\\d{2}:\\d{2}:\\d{2}:\\d{3}$").match(input: t){
+            if !DateTime.RegexTool.init("^\\d+\\s\\d{2}:\\d{2}:\\d{2}:\\d{3}$").match(input: t){
                 print("you time \(time) did not comfirm the timespan format dd HH:mm:ss:SSS")
                 return nil
             }
@@ -394,19 +394,3 @@ open class TimeSpan: NSObject,Comparable {
         }
     }
 }
-
-struct regexTool {
-    let regex:NSRegularExpression?
-    init(_ pattern:String){
-        regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive)
-    }
-    func match(input:String)->Bool{
-        if let matches = regex?.matches(in: input, options: NSRegularExpression.MatchingOptions.withoutAnchoringBounds, range: NSMakeRange(0, (input as NSString).length)) {
-            return matches.count > 0
-        }
-        else{
-            return false
-        }
-    }
-}
-

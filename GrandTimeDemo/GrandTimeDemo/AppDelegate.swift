@@ -27,8 +27,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         print(a)
         let c = DateTime(date: Date(timeInterval: 3600, since: Date())) //使用NSDate初始化
         print(c)
-        let e = DateTime(ticks: 1000000) //使用Tick初始化
-        print(e!)
         let g = DateTime(timestamp: 100000)//使用Stamp初始化
         print(g!)
         let h = DateTime(year: 2008, month: 2, day: 29) //使用年月日初始化
@@ -81,7 +79,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         
         //下面获取部分
-        print("获取i的各部分：year:\(i.year),   month:\(i.month),   day:\(i.day),   hour:\(i.hour),   minute:\(i.minute),   second:\(i.second),   minute:\(i.minute),   ticks:\(i.ticks),   ")
+        print("获取i的各部分：year:\(i.year),   month:\(i.month),   day:\(i.day),   hour:\(i.hour),   minute:\(i.minute),   second:\(i.second),   minute:\(i.minute),     ")
         
         //还可以直接设置各部分
         i.year = 2015
@@ -91,7 +89,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         i.minute = 23
         i.second = 12
         i.millisecond = 555
-         print("再次获取i的各部分：year:\(i.year),   month:\(i.month),   day:\(i.day),   hour:\(i.hour),   minute:\(i.minute),   second:\(i.second),   minute:\(i.minute),   ticks:\(i.ticks),   ")
+         print("再次获取i的各部分：year:\(i.year),   month:\(i.month),   day:\(i.day),   hour:\(i.hour),   minute:\(i.minute),   second:\(i.second),   minute:\(i.minute),   ")
         //获取季度和星期相关数据
         print("星期几:\(i.weekDay)")
         print("第几季度:\(i.quarter)")
@@ -182,12 +180,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         
         let last = DateTime.now - TimeSpan.fromDays(36500)
-        //目录最少只能表示1970年，这样不合理
+        //目录最少只能表示1970年，这样不合理,其实也没什么不合理的
         print(last)
-        let sss = Date(timeIntervalSince1970: -62167219200)
-        print(sss)
-        print(sss.timeIntervalSince1970)
-        print(DateTime.now.toOCDate())
         
         
         

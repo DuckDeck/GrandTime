@@ -46,8 +46,14 @@ enum DisplayDateTimeStyleLanguage {
 
 public let LeapYearMonth = [31,29,31,30,31,30,31,31,30,31,30,31]
 public let NotLeapYearMonth  = [31,28,31,30,31,30,31,31,30,31,30,31]
-
+//public let TickTo1970 = -62167219200 //这个时间戳是 0000-01-01 00:00:00的时间戳
+//public let TickTo1970 = -2197208776 //这个时间戳是 1900-01-01 00:00:00的时间戳。//从这个时间算吧，没办法
+//Issue 点
+// 用这个版本来发布到Cocoapods发现报错，但是我用模拟器完全OK，就是因为这个数，超出32位的大小了，当跑在真机上或者模拟
+//器上时，是可以用64位的，但是当选择generic ios device 来编译代码时，会出现可能是32位的情况，32位是不能放下这么大的数的，
+//所以就出错了
 //这个会有点难，要算的东西有点多
+//不行。这个问题还是得修复，因为打包时还是得有32位，会报错的
 public func -(left:DateTime,right:DateTime) -> TimeSpan? {
     let ms = left.dateTime.timeIntervalSince(right.dateTime)
     if ms < 0 {
@@ -58,16 +64,16 @@ public func -(left:DateTime,right:DateTime) -> TimeSpan? {
 }
 
 public func +(left:DateTime,right:TimeSpan) -> DateTime {
-    let ms = left.ticks + right.ticks
-    return DateTime(ticks: ms)!
+    let ms = left.timestamp + right.seconds
+    return DateTime(timestamp: ms)!
 }
 
 public func -(left:DateTime,right:TimeSpan) -> DateTime {
-    var ms = left.ticks - right.ticks
+    var ms = left.timestamp - right.seconds
     if ms < 0 {
         ms = 0
     }
-    return DateTime(ticks: ms)!
+    return DateTime(timestamp: ms)!
     
 }
 
@@ -95,12 +101,12 @@ public func <=(lhs: DateTime, rhs: DateTime) -> Bool {
 
 open class DateTime: NSObject,Comparable {
     
-    //最小是0001 年 1 月 1 日午夜 00:00:00
-    open static let minDateTime = DateTime(ticks: 0)
+    //最小是0001 年 1 月 1 日午夜 00:00:00 不用这个了，没有任何意义
+    //open static let minDateTime = DateTime(ticks: 0)
     //这里最大值一直不明确，但是我已经试过了，iOS里面最大的NSDate是一个非常大有年份，我可以保证没有人可以用到的
     open static let maxDateTime = DateTime(date: Date(timeIntervalSince1970: TimeInterval(Int.max) / 100000))
     
-    open static let TickTo1970 = -62167219200 //这个时间戳是 0000-01-01 00:00:00的时间戳
+   
     
     fileprivate static let dateFormatter = DateFormatter()
     
@@ -131,30 +137,6 @@ open class DateTime: NSObject,Comparable {
     }
     
     
-    
-    public convenience init?(ticks:Int) {
-        self.init()
-        if ticks < 0 {
-            print("DateTime warning: tick can not less than 0")
-            return nil
-        }
-        else if ticks >= Int.max / 100000{
-            print("DateTime warning: tick can not bigger than Int.max / 100000")
-            return nil
-        }
-        dateTime = Date(timeIntervalSince1970: TimeInterval(Int(ticks / 1000) + DateTime.TickTo1970))
-        internalDateComponent =  (Calendar.current as NSCalendar).components([.weekday,.weekOfYear,.year,.month,.day,.hour,.minute,.second,.nanosecond,.quarter,.weekOfMonth,.weekOfYear], from: dateTime)
-        
-    }
-    //暂时不要这个
-    //  public  convenience init(tick:Int,kind:DateTimeKind) {
-    //        self.init()
-    //        assert(tick >= 0 && tick <= Int.max / 100000, "wrong tick")
-    //        //这个是以秒为单体，DateTime都是100纳秒为单位
-    //        dateTImeKind = kind
-    //        dateTime = NSDate(timeIntervalSince1970: Double(tick) / 1000.0)
-    //    }
-    
     public convenience init(date:Date) {
         self.init()
         dateTime = date
@@ -163,11 +145,11 @@ open class DateTime: NSObject,Comparable {
     
     public convenience init?(timestamp:Int){
         self.init()
-        if timestamp < DateTime.TickTo1970 {
-            print("DateTime warning: timestamp can not less than -62167219200")
-            return nil
-        }
-        else if timestamp > Int.max / 100000{
+//        if timestamp < TickTo1970 {
+//            print("DateTime warning: timestamp can not less than -62167219200")
+//            return nil
+//        }
+        if timestamp > Int.max / 100000{
             print("DateTime warning: timestamp can not bigger than Int.max / 100000")
             return nil
         }
@@ -392,7 +374,7 @@ open class DateTime: NSObject,Comparable {
     
     open var millisecond:Int{
         get{
-            return internalDateComponent.nanosecond!
+            return internalDateComponent.nanosecond! / 1000000
         }
         set{
             internalDateComponent.nanosecond = newValue * 1000000
@@ -410,7 +392,7 @@ open class DateTime: NSObject,Comparable {
             return internalDateComponent.nanosecond!
         }
         set{
-            internalDateComponent.nanosecond = newValue * 1000
+            internalDateComponent.nanosecond = newValue
             if let date = Calendar.current.date(from: internalDateComponent){
                 dateTime = date
             }
@@ -440,9 +422,6 @@ open class DateTime: NSObject,Comparable {
         return internalDateComponent.weekOfYear!
     }
     
-    open var ticks:Int{
-        return (Int(dateTime.timeIntervalSince1970) - DateTime.TickTo1970) * 1000
-    }
     
     var timestamp:Int{
         return Int(dateTime.timeIntervalSince1970)
@@ -484,15 +463,6 @@ open class DateTime: NSObject,Comparable {
                 return days + day
             }
         }
-    }
-    
-    open static func ticksToTimestamp(ticks:Int)->Int{
-        assert(ticks >= 0,"ticks must bigger than 0")
-        return Int(ticks / 1000 + TickTo1970)
-    }
-    
-    open static func timestampToTicks(timestamp:Int)->Int{
-        return (timestamp - TickTo1970) * 1000
     }
     
     open static func isLeapYeay(_ year:Int)->Bool{
@@ -685,7 +655,9 @@ open class DateTime: NSObject,Comparable {
         return DateTime(year: 0, month: 0, day: 0, hour: hour, minute: minute, second: second)!
     }
     
-    
+    var secondsToZeroTime:Int{
+        return hour * 3600 + minute * 60 + second
+    }
     
     //这里还需要各种转化为时间的Style，需要补上
     
@@ -711,10 +683,26 @@ open class DateTime: NSObject,Comparable {
     }
     
     open override var hashValue: Int{
-        return ticks ^ hash
+        return timestamp ^ hash
     }
     
     open override func copy() -> Any {
         return DateTime(date: dateTime)
     }
+    
+    struct RegexTool {
+        let regex:NSRegularExpression?
+        init(_ pattern:String){
+            regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive)
+        }
+        func match(input:String)->Bool{
+            if let matches = regex?.matches(in: input, options: NSRegularExpression.MatchingOptions.withoutAnchoringBounds, range: NSMakeRange(0, (input as NSString).length)) {
+                return matches.count > 0
+            }
+            else{
+                return false
+            }
+        }
+    }
+
 }
