@@ -423,7 +423,7 @@ open class DateTime: NSObject,Comparable {
     }
     
     
-    var timestamp:Int{
+    open var timestamp:Int{
         return Int(dateTime.timeIntervalSince1970)
     }
     

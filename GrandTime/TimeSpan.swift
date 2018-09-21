@@ -337,7 +337,7 @@ open class TimeSpan: NSObject,Comparable {
 //    }
     
 
-  open  func subtract(_ time:TimeSpan) -> TimeSpan {
+   open func subtract(_ time:TimeSpan) -> TimeSpan {
         let tick = ticks - time.ticks
         assert(ticks > 0,"tick must > 0")
         return TimeSpan(ticks: tick)
@@ -361,7 +361,7 @@ open class TimeSpan: NSObject,Comparable {
     
   
    //这里有前面补0的问题，其实可以用格式的大小写来解决
-    func format(format:String = "dd HH:mm:ss") -> String {
+   open func format(format:String = "dd HH:mm:ss") -> String {
         let minute = String(format: "%02d", minutes)
         let second = String(format: "%02d", seconds)
         let millisecond = String(format: "%03d", milliseconds)
