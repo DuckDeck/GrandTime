@@ -104,7 +104,7 @@ open class DateTime: NSObject,Comparable {
     //最小是0001 年 1 月 1 日午夜 00:00:00 不用这个了，没有任何意义
     //open static let minDateTime = DateTime(ticks: 0)
     //这里最大值一直不明确，但是我已经试过了，iOS里面最大的NSDate是一个非常大有年份，我可以保证没有人可以用到的
-    open static let maxDateTime = DateTime(date: Date(timeIntervalSince1970: TimeInterval(Int.max) / 100000))
+    public static let maxDateTime = DateTime(date: Date(timeIntervalSince1970: TimeInterval(Int.max) / 100000))
     
    
     
@@ -267,7 +267,7 @@ open class DateTime: NSObject,Comparable {
     
     open var local = Locale(identifier: "zh_CN")
     
-    open static var  now:DateTime{
+    public static var  now:DateTime{
         return DateTime()
     }
     
@@ -465,7 +465,7 @@ open class DateTime: NSObject,Comparable {
         }
     }
     
-    open static func isLeapYeay(_ year:Int)->Bool{
+    public static func isLeapYeay(_ year:Int)->Bool{
         return year % 4 == 0 && year % 100 != 0
     }
     
@@ -587,7 +587,7 @@ open class DateTime: NSObject,Comparable {
     }
     
     
-    open static func compare(_ left:DateTime,right:DateTime)->Int{
+    public static func compare(_ left:DateTime,right:DateTime)->Int{
         let result = left.dateTime.compare(right.dateTime)
         if result == .orderedAscending {
             return -1
@@ -619,7 +619,7 @@ open class DateTime: NSObject,Comparable {
         }
     }
     
-    open static func equals(_ left:DateTime,right:DateTime)->Bool{
+    public static func equals(_ left:DateTime,right:DateTime)->Bool{
         return DateTime.compare(left, right: right) == 0
     }
     
@@ -662,7 +662,7 @@ open class DateTime: NSObject,Comparable {
     //这里还需要各种转化为时间的Style，需要补上
     
     
-    open static func parse(_ time:String) -> DateTime? {
+    public static func parse(_ time:String) -> DateTime? {
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
         if let date = dateFormatter.date(from: time){
             return DateTime(date: date)
@@ -672,7 +672,7 @@ open class DateTime: NSObject,Comparable {
         }
     }
     
-    open  static func parse(_ time:String,format:String) -> DateTime? {
+    public  static func parse(_ time:String,format:String) -> DateTime? {
         dateFormatter.dateFormat = format
         if let date = dateFormatter.date(from: time){
             return DateTime(date: date)
@@ -682,9 +682,10 @@ open class DateTime: NSObject,Comparable {
         }
     }
     
-    open override var hashValue: Int{
-        return timestamp ^ hash
+    open override var hash: Int{
+        return timestamp ^ self.hash
     }
+
     
     open override func copy() -> Any {
         return DateTime(date: dateTime)

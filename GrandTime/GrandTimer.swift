@@ -48,26 +48,26 @@ open class GrandTimer: NSObject {
         self.timer = DispatchSource.makeTimerSource(flags: DispatchSource.TimerFlags(rawValue: UInt(0)), queue: self.privateSerialQueue)  as? DispatchSource
     }
     
-   open static func scheduleTimerWithTimeSpan(_ timespan:TimeSpan,target:AnyObject,sel:Selector,userInfo:AnyObject?,repeats:Bool,dispatchQueue:DispatchQueue)->GrandTimer{
+   public static func scheduleTimerWithTimeSpan(_ timespan:TimeSpan,target:AnyObject,sel:Selector,userInfo:AnyObject?,repeats:Bool,dispatchQueue:DispatchQueue)->GrandTimer{
         let timer = GrandTimer(timespan: timespan, target: target, sel: sel, userInfo: userInfo, repeats: repeats, dispatchQueue: dispatchQueue)
         timer.schedule()
         return timer
     }
     
-   open  static func scheduleTimerWithTimeSpan(_ timespan:TimeSpan,block:@escaping ()->Void,repeats:Bool,dispatchQueue:DispatchQueue)->GrandTimer{
+   public  static func scheduleTimerWithTimeSpan(_ timespan:TimeSpan,block:@escaping ()->Void,repeats:Bool,dispatchQueue:DispatchQueue)->GrandTimer{
         let timer = GrandTimer(timespan: timespan, block: block, repeats: repeats, dispatchQueue: dispatchQueue)
         timer.schedule()
         return timer
     }
     
-  open  static func after(_ timeSpan:TimeSpan,block:@escaping ()->Void)->GrandTimer{
+  public  static func after(_ timeSpan:TimeSpan,block:@escaping ()->Void)->GrandTimer{
         let privateQueueName = "grandTimeAfter\(arc4random())"
         let dispatch = DispatchQueue(label: privateQueueName, attributes: DispatchQueue.Attributes.concurrent)
         let timer = GrandTimer.scheduleTimerWithTimeSpan(timeSpan, block: block, repeats: false, dispatchQueue: dispatch)
         return timer
     }
     
-   open static func every(_ timeSpan:TimeSpan,block:@escaping ()->Void)->GrandTimer{
+   public static func every(_ timeSpan:TimeSpan,block:@escaping ()->Void)->GrandTimer{
         let privateQueueName = "grandTimeEvery\(arc4random())"
         let dispatch = DispatchQueue(label: privateQueueName, attributes: DispatchQueue.Attributes.concurrent)
         let timer = GrandTimer.scheduleTimerWithTimeSpan(timeSpan, block: block, repeats: true, dispatchQueue: dispatch)

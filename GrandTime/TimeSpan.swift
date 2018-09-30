@@ -57,8 +57,8 @@ public func == (lhs: TimeSpan, rhs: TimeSpan) -> Bool
 open class TimeSpan: NSObject,Comparable {
     
     
-  open  static let Max = TimeSpan(days: 100000, hours: 23, minutes: 59, seconds: 59, milliseconds: 999)
-  open  static let Zero = TimeSpan(days: 0, hours: 0, minutes: 0, seconds: 0, milliseconds: 0)
+  public  static let Max = TimeSpan(days: 100000, hours: 23, minutes: 59, seconds: 59, milliseconds: 999)
+  public  static let Zero = TimeSpan(days: 0, hours: 0, minutes: 0, seconds: 0, milliseconds: 0)
   fileprivate  var _day = 0
   fileprivate  var _hour = 0
   fileprivate  var _minute = 0
@@ -219,7 +219,7 @@ open class TimeSpan: NSObject,Comparable {
         return Double(_ticks) / Double(TickPerSecond)
     }
     
-    open static func compare(_ t1:TimeSpan,t2:TimeSpan)->Int{
+    public static func compare(_ t1:TimeSpan,t2:TimeSpan)->Int{
         if t1.ticks > t2.ticks {
             return 1
         }
@@ -229,30 +229,30 @@ open class TimeSpan: NSObject,Comparable {
         return 0
     }
     
-    open static func equl(_ t1:TimeSpan,t2:TimeSpan)->Bool{
+    public static func equl(_ t1:TimeSpan,t2:TimeSpan)->Bool{
        return t1.ticks == t2.ticks
     }
 
-    open static func fromDays(_ days:Double)->TimeSpan{
+    public static func fromDays(_ days:Double)->TimeSpan{
         assert(days >= 0, "days must >= 0")
         return TimeSpan(ticks: Int(days * Double(TickPerDay)))
     }
     
-    open static func fromHours(_ hours:Double)->TimeSpan{
+    public static func fromHours(_ hours:Double)->TimeSpan{
         assert(hours >= 0, "hours must >= 0") //这里就不需要<24了
         return TimeSpan(ticks: Int(hours * Double(TickPerHour)))
     }
     
-    open static func fromMinuts(_ minutes:Double)->TimeSpan{
+    public static func fromMinuts(_ minutes:Double)->TimeSpan{
         assert(minutes >= 0, "minutes must >= 0")//这里就不需要<60了
         return TimeSpan(ticks: Int(minutes * Double(TickPerMinute)))
     }
     
-    open static func fromSeconds(_ seconds:Double)->TimeSpan{
+    public static func fromSeconds(_ seconds:Double)->TimeSpan{
         assert(seconds >= 0, "minutes must >= 0")//这里就不需要<60了
         return TimeSpan(ticks: Int(seconds * Double(TickPerSecond)))
     }
-    open static func fromTicks(_ ticks:Int)->TimeSpan{
+    public static func fromTicks(_ ticks:Int)->TimeSpan{
         assert(ticks >= 0, "minutes must >= 0")//这里就不需要<60了
         return TimeSpan(ticks: ticks)
     }
@@ -264,7 +264,7 @@ open class TimeSpan: NSObject,Comparable {
     //这个还是要做一做的
     // 默认和格式是 dd HH:mm:ss
     //这时用个枚举就好了，只支持三种格式，选择太多其实并不好
-    open static func parse(_ time:String,format:TimeSpanFormat)->TimeSpan?{
+    public static func parse(_ time:String,format:TimeSpanFormat)->TimeSpan?{
         let t = time.trimmingCharacters(in: .whitespaces)
         switch format {
         case .dayFormat:
