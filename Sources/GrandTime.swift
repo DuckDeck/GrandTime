@@ -602,7 +602,7 @@ open class DateTime: NSObject,Comparable {
         return DateTime.compare(self, right: time)
     }
     
-    open   func daysInMonth(_ year:Int,month:Int) -> Int? {
+    public static  func daysInMonth(_ year:Int,month:Int) -> Int? {
         if month < 1 {
             print("DateTime warning: month can not less than 1")
             return nil
@@ -616,6 +616,16 @@ open class DateTime: NSObject,Comparable {
         }
         else{
             return NotLeapYearMonth[month]
+        }
+    }
+    
+    open  func daysInMonth() -> Int {
+        
+        if DateTime.isLeapYeay(self.year) {
+            return LeapYearMonth[self.month]
+        }
+        else{
+            return NotLeapYearMonth[self.month]
         }
     }
     
@@ -683,7 +693,7 @@ open class DateTime: NSObject,Comparable {
     }
     
     open override var hash: Int{
-        return timestamp ^ self.hash
+        return timestamp.hashValue
     }
 
     
