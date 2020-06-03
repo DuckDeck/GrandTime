@@ -14,7 +14,7 @@
 ## 【系统要求】
  【Xcode 7.3 and iOS 8.0 最新的Swift版本】
 
-##【安装】
+## 【安装】
 +  【使用Cocoapods安装， pod 'GrandTime'】
 + 【手动导入，只要把项目拖进你的文件就行】
 
